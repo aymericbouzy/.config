@@ -3,7 +3,7 @@ export PROFILE="$HOME/.zshrc"
 
 # Edit profile
 function config {
-  code --wait ~/.zshrc
-  source ~/.zshrc
+  code --wait ~/.config/zsh
+  source $PROFILE
 }
 alias reload="source $PROFILE"
