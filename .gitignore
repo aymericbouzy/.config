@@ -1,2 +1,7 @@
 zsh/secrets.zsh
+
 gcloud
+
+# yarn
+**/node_modules
+yarn/link
