@@ -1,4 +1,6 @@
+# secrets
 zsh/secrets.zsh
+gh/hosts.yml
 
 # gcloud
 gcloud
