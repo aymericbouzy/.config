@@ -5,3 +5,9 @@ gcloud
 # yarn
 **/node_modules
 yarn/link
+
+# nodemon
+configstore/nodemon.json
+configstore/update-notifier-nodemon.json
+configstore/update-notifier-npm.json
+configstore/update-notifier-patch-package.json
