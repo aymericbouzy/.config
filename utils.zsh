@@ -9,3 +9,5 @@ function whoisusingport {
   PORT="$1"
   lsof -nP -i4TCP:$PORT | grep LISTEN
 }
+
+alias clipboard="pbcopy"

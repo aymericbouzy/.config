@@ -10,7 +10,7 @@ function release {
 
   local PACKAGE_JSON_PATH="$PWD/package.json"
   local VERSION=$(cat "$PACKAGE_JSON_PATH" | jq '.version' -r)
-  echo "Release *${PWD##*/} v$VERSION*\n* $MESSAGE\n" | pbcopy
+  echo "Release *${PWD##*/} v$VERSION*\n* $MESSAGE\n" | clipboard
 
   echo
   echo "Ready to deploy 🕐 Review the diff before pushing your code 🚨"
@@ -48,7 +48,7 @@ function hotfix {
   yarn test
   npm version "$BUMP" -m "$MESSAGE"
   git flow hotfix finish "v$NEW"
-  echo "Release *${PWD##*/} v$NEW*\n* $MESSAGE\n" | pbcopy
+  echo "Release *${PWD##*/} v$NEW*\n* $MESSAGE\n" | clipboard
 }
 
 # usage: restore v1.3.2
@@ -67,7 +67,7 @@ function restore {
   git commit -am "revert: restore $TAG"
   npm version "$NEW" -m "release: restore $TAG"
   git flow hotfix finish "v$NEW"
-  echo "Release *${PWD##*/} v$NEW*\n* revert $TAG\n" | pbcopy
+  echo "Release *${PWD##*/} v$NEW*\n* revert $TAG\n" | clipboard
 }
 
 function deploy {
