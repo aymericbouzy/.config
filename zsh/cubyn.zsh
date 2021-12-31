@@ -17,3 +17,9 @@ alias devenv="cd $HOME/Dev/cubyn/infra-docker-compose; docker-compose -f datasou
 
 # helm
 export CUBYN_HELM_PATH="$HOME/Dev/cubyn/helm"
+
+# FIXME: make it work with TS template conventions
+function shmig-rollback {
+  local COMMAND='./shmig -t mysql -l $DB_USER -p $DB_PASS -d $DB_DATABASE -H ${DB_HOST:-localhost} -P ${DB_PORT:-3306} -m migrations/prod -s migrations rollback 1'
+  dotenv -e .env -- bash -c "$COMMAND"
+}
