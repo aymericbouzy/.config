@@ -12,7 +12,7 @@ function defnode {
 # auto detect node version
 cd() {
   builtin cd "$@"
-  if [[ -f .nvmrc ]]; then
+  if [ -f .nvmrc ] && ! semver -r "$(cat .nvmrc)" "$(node --version)" > /dev/null; then
     n auto
   fi
 }
