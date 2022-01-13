@@ -5,6 +5,12 @@ function kube-staging {
 }
 alias ks="kube-staging"
 
+function kube-qa {
+  gcloud container clusters get-credentials qa --region=europe-west1-b --project=quality-and-assurance
+  export KUBE_NAMESPACE=qa
+}
+alias kq="kube-qa"
+
 function kube-demo {
   gcloud container clusters get-credentials non-critical --zone europe-west3-c --project infra-195110
   export KUBE_NAMESPACE=sandbox
