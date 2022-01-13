@@ -19,6 +19,13 @@ function pr-cherry-pick {
   git cherry-pick "$COMMIT^..$COMMIT^2"
 }
 
+# usage: mr-cherry-pick feature/OR-74-add-osv2-warehouse
+function mr-cherry-pick {
+  local BRANCH="$1"
+  COMMIT="$(git log develop --grep "Merge branch '$BRANCH' into" -n 1 --merges --format=%H)"
+  git cherry-pick "$COMMIT^..$COMMIT^2"
+}
+
 function auto-review {
   git rebase -i develop --autosquash --exec 'git reset HEAD^ && yarn test -o && yarn lint && git reset HEAD@{1}'
 }
