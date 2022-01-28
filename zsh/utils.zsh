@@ -10,7 +10,9 @@ function whoisusingport {
   lsof -nP -i4TCP:$PORT | grep LISTEN
 }
 
-alias clipboard="pbcopy"
+function clipboard {
+  pbcopy < /dev/stdin
+}
 
 # CSV to SQL list
 function csv-to-sql {
