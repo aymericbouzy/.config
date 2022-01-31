@@ -1,3 +1,8 @@
+function run {
+  local COMMAND="$1"
+  dotenv -e .env${ENV:+.$ENV} -- bash -c "$COMMAND"
+}
+
 function testdb {
   local SQL='DROP DATABASE IF EXISTS \`${DB_DATABASE:-$MYSQL_DATABASE}\`; CREATE DATABASE \`${DB_DATABASE:-$MYSQL_DATABASE}\`;'
   local COMMAND='MYSQL_PWD=${DB_PASS:-$MYSQL_PASSWORD} mysql -h ${DB_HOST:-$MYSQL_HOST} -u ${DB_USER:-$MYSQL_USER} -e "'$SQL'"'
@@ -24,6 +29,5 @@ function shmig-rollback {
   else
     local MIGRATIONS_DIRECTORY="migrations"
   fi
-  local COMMAND='./shmig -t mysql -l ${DB_USER:-$MYSQL_USER} -p ${DB_PASS:-$MYSQL_PASSWORD} -d ${DB_DATABASE:-$MYSQL_DATABASE} -H ${DB_HOST:-${MYSQL_HOST:-localhost}} -P ${DB_PORT:-${MYSQL_PORT:-3306}} -m '$MIGRATIONS_DIRECTORY' -s migrations rollback 1'
-  dotenv -e ${DOTENV_FILE:-.env} -- bash -c "$COMMAND"
+  run './shmig -t mysql -l ${DB_USER:-$MYSQL_USER} -p ${DB_PASS:-$MYSQL_PASSWORD} -d ${DB_DATABASE:-$MYSQL_DATABASE} -H ${DB_HOST:-${MYSQL_HOST:-localhost}} -P ${DB_PORT:-${MYSQL_PORT:-3306}} -m '$MIGRATIONS_DIRECTORY' -s migrations rollback 1'
 }
