@@ -31,11 +31,12 @@ alias devenv="cd $HOME/Dev/cubyn/infra-docker-compose; docker-compose -f datasou
 # helm
 export CUBYN_HELM_PATH="$HOME/Dev/cubyn/helm"
 
-function shmig-rollback {
+function shmig {
+  local COMMAND="$1"
   if [ -d migrations/prod ]; then
     local MIGRATIONS_DIRECTORY="migrations/prod"
   else
     local MIGRATIONS_DIRECTORY="migrations"
   fi
-  run './shmig -t mysql -l ${DB_USER:-$MYSQL_USER} -p ${DB_PASS:-$MYSQL_PASSWORD} -d ${DB_DATABASE:-$MYSQL_DATABASE} -H ${DB_HOST:-${MYSQL_HOST:-localhost}} -P ${DB_PORT:-${MYSQL_PORT:-3306}} -m '$MIGRATIONS_DIRECTORY' -s migrations rollback 1'
+  run './shmig -t mysql -l ${DB_USER:-$MYSQL_USER} -p ${DB_PASS:-$MYSQL_PASSWORD} -d ${DB_DATABASE:-$MYSQL_DATABASE} -H ${DB_HOST:-${MYSQL_HOST:-localhost}} -P ${DB_PORT:-${MYSQL_PORT:-3306}} -m '"$MIGRATIONS_DIRECTORY"' -s migrations '"$COMMAND"
 }
