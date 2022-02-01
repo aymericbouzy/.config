@@ -3,7 +3,14 @@ export PROFILE="$HOME/.zshrc"
 
 # Edit profile
 function config {
-  code -n --wait ~/.config/zsh
-  source $PROFILE
+  code -n ~/.config/zsh
+  read confirmation
+  echo "Reloading 🕐"
+  reload
+  echo "Reloaded ✅"
 }
-alias reload="source $PROFILE"
+
+# Reload profile
+function reload {
+  source "$PROFILE"
+}
