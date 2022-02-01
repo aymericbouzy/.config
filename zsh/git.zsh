@@ -1,9 +1,19 @@
+function git-branch-exists {
+  local BRANCH="$1"
+  git rev-parse --verify "refs/heads/$BRANCH" > /dev/null 2> /dev/null
+  return $?
+}
+
 # sync master and develop with origin
 function git-sync {
-  git switch master
-  git pull
-  git switch develop
-  git pull
+  if git-branch-exists master; then
+    git switch master
+    git pull
+  fi
+  if git-branch-exists develop; then
+    git switch develop
+    git pull
+  fi
 }
 alias gs="git-sync"
 
