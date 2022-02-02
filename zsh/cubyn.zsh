@@ -1,6 +1,13 @@
 function run {
   local COMMAND="$1"
-  dotenv -e .env${ENV:+.$ENV} -- bash -c "$COMMAND"
+  if cat package.json | grep '"dotenv":'; then
+    dotenv -e .env${ENV:+.$ENV} -- bash -c "$COMMAND"
+  elif cat package.json | grep '"dotenv-flow":'; then
+    NODE_ENV=${NODE_ENV:-$ENV} dotenv-flow -- bash -c "$COMMAND"
+  else
+    echo "You must be using dotenv or dotenv flow in the repo" >>/dev/stderr
+    return 1
+  fi
 }
 
 function sql {
