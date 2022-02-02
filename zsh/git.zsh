@@ -19,7 +19,7 @@ alias gs="git-sync"
 
 # usage: git-global-cherry-pick service-parcel 5ab7a68
 function git-global-cherry-pick {
-  git --git-dir=../$1/.git format-patch -k -1 --stdout $2 | git am -3 -k
+  git --git-dir=../$1/.git format-patch -k -1 --stdout $2 | git apply --reject --whitespace=fix
 }
 
 # usage: pr-cherry-pick 24
