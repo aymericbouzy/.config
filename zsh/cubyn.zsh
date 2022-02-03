@@ -56,3 +56,20 @@ function shmig {
   fi
   run './shmig -t mysql -l ${DB_USER:-$MYSQL_USER} -p ${DB_PASS:-$MYSQL_PASSWORD} -d ${DB_DATABASE:-$MYSQL_DATABASE} -H ${DB_HOST:-${MYSQL_HOST:-localhost}} -P ${DB_PORT:-${MYSQL_PORT:-3306}} -m '"$MIGRATIONS_DIRECTORY"' -s migrations '"$COMMAND"
 }
+
+# usage: s3 /kyivl54o000a30ebe94xncgd.xlsx
+function s3 {
+  if [[ $1 == *"vault/"* ]]; then
+    aws s3 cp s3://cubyn.prod.vault${1//vault\/} ${2:-"~/Downloads"}
+  else
+    aws s3 cp s3://cubyn.prd$1 ${2:-"~/Downloads"}
+  fi
+}
+# usage: s3-staging /kyivl54o000a30ebe94xncgd.xlsx
+function s3-staging {
+  if [[ $1 == *"vault/"* ]]; then
+    aws s3 cp s3://cubyn.staging.vault${1//vault\/} ${2:-"~/Downloads"}
+  else
+    aws s3 cp s3://cubyn.ppd$1 ${2:-"~/Downloads"}
+  fi
+}
