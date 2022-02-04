@@ -59,5 +59,9 @@ function carotte-create {
   local QUALIFIER="$2"
   local QUALIFIER_PATH="./src/$FOLDER/$QUALIFIER"
   mkdir $QUALIFIER_PATH
-  touch $QUALIFIER_PATH/{handler,handler.spec,meta}.ts
+  if [ -f "./src/index.js" ]; then
+    touch $QUALIFIER_PATH/{index,index.spec}.js
+  else
+    touch $QUALIFIER_PATH/{handler,handler.spec,meta}.ts
+  fi
 }
