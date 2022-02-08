@@ -5903,10 +5903,10 @@ ret@~0.1.10:
   resolved "https://registry.yarnpkg.com/ret/-/ret-0.1.15.tgz#b8a4825d5bdb1fc3f6f53c2bc33f81388681c7bc"
   integrity sha512-TTlYpa+OL+vMMNG24xSlQGEJ3B/RzEfUlLct7b5G/ytav+wPrplCpVMFuwzXbkecJrb6IYo1iFb0S9v37754mg==
 
-retree-cli@^0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/retree-cli/-/retree-cli-0.3.0.tgz#151e061b1986641edfb06e17904b60beca7814a3"
-  integrity sha512-30ScGKUZLeBPCnK6UHMqH1o1t92QYp7ZQNk2VNxBuq+eX4EIEEsHVtceWXiRPpUhMWJWOTfGTlYbsOA+otSg4g==
+retree-cli@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/retree-cli/-/retree-cli-0.3.1.tgz#b036455faba241c704d95c49fba896a8700222da"
+  integrity sha512-S3Qt3czxpcj0BexLAKiu3Ik8ZXyVFLgt44vzbLFkQ55QyhbLLEpFYv5sATKszgeLaD9+DDb1s2LpozTdCtx27Q==
   dependencies:
     tmp-promise "^3.0.2"
     uuid "^8.3.2"
