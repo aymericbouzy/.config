@@ -8,6 +8,7 @@
     "dotenv-flow-cli": "^1.0.0",
     "nodemon": "^2.0.12",
     "retree-cli": "^0.3.1",
-    "semver": "^7.3.5"
+    "semver": "^7.3.5",
+    "zx": "^5.0.0"
   }
 }
