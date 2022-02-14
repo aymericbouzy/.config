@@ -1,0 +1,4 @@
+#!/usr/bin/env zx
+import { v4 as uuid } from '@lukeed/uuid'
+
+console.log(uuid());

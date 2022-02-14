@@ -1,0 +1,10 @@
+{
+  "name": "zs-scripts",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@lukeed/uuid": "^2.0.0",
+    "zx": "^5.0.0"
+  }
+}
