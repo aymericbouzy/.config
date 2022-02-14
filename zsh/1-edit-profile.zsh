@@ -3,7 +3,7 @@ export PROFILE="$HOME/.zshrc"
 
 # Edit profile
 function config {
-  code -n ~/.config/zsh
+  code -n ~/.config
   read confirmation
   echo "Reloading 🕐"
   reload
