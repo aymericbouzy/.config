@@ -1,9 +1,0 @@
-#!/usr/bin/env zx
-import 'zx/globals';
-const template = `#!/usr/bin/env zx`;
-const scriptPath = `${__dirname}/${argv._[1]}`;
-
-$`touch ${scriptPath}`;
-$`echo ${template} > ${scriptPath}`;
-$`chmod +x ${scriptPath}`;
-$`$EDITOR ${scriptPath}`;
