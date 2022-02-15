@@ -1,6 +1,6 @@
 export CAROTTE_HOST="rabbitmq:5675"
 export AMQP_HOST="$CAROTTE_HOST"
-export CAROTTE_CLI_USER="aymeric_bouzy"
+export CAROTTE_CLI_USER="aymeric_bouzy_cubyn_com"
 export CAROTTE_DEBUG_TOKEN="aymeric"
 
 ###-begin-carotte-completions-###
