@@ -23,3 +23,11 @@ function csv-to-sql {
 function ms {
   node -e 'console.log(Date.now())'
 }
+
+# prefix to any command to know how much time it lasted
+function chrono {
+  local START=$(ms)
+  "$@"
+  echo "Done in $(($(ms) - $START))ms"
+  return $?
+}
