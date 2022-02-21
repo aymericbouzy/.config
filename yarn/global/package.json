@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@types/node": "^17.0.18",
     "@vue/cli": "^4.5.13",
     "carotte-cli": "^2.1.1",
     "carotte-rest-mapper": "^0.0.1",
@@ -9,6 +10,8 @@
     "nodemon": "^2.0.12",
     "retree-cli": "^0.3.1",
     "semver": "^7.3.5",
+    "ts-node": "^10.5.0",
+    "typescript": "^4.5.5",
     "zx": "^5.0.0"
   }
 }
