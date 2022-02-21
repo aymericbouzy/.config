@@ -72,3 +72,7 @@ function s3-staging {
     aws s3 cp s3://cubyn.ppd$1 ${2:-"~/Downloads"}
   fi
 }
+
+function trx {
+  open "https://app.datadoghq.com/logs?cols=service%2C%40custom.errorString.type&from_ts=1606136683000&index=&live=true&messageDisplay=inline&query=%40context.transactionId%3A$1&stream_sort=desc&to_ts=1607346283000"
+}
