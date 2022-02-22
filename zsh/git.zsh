@@ -48,3 +48,4 @@ alias gri="git rebase -i develop --autosquash"
 alias grc="git rebase --continue"
 alias review="gh pr checkout"
 alias commit='git commit -m "$(input)"'
+alias gcaa="git commit -a --amend"
