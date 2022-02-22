@@ -2,15 +2,16 @@
 function release {
   local BUMP="$1"
   local MESSAGE="$2"
-  git-sync
-  git switch develop
-  npm version "$BUMP" -m "$MESSAGE"
-  git switch master
-  git merge develop
-
   local PACKAGE_JSON_PATH="$PWD/package.json"
-  local VERSION=$(cat "$PACKAGE_JSON_PATH" | jq '.version' -r)
-  echo "Release *${PWD##*/} v$VERSION*\n* $MESSAGE\n" | clipboard
+  local CURRENT=$(cat "$PACKAGE_JSON_PATH" | jq '.version' -r)
+  local NEW=$(semver "$CURRENT" -i "$BUMP")
+  git-sync
+  git flow init -d
+  git flow release start "v$NEW"
+  npm version "$BUMP" -m "$MESSAGE"
+  git flow release finish "v$NEW"
+
+  echo "Release *${PWD##*/} v$NEW*\n* $MESSAGE\n" | clipboard
 
   echo
   echo "Ready to deploy 🕐 Review the diff before pushing your code 🚨"
