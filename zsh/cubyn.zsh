@@ -1,6 +1,9 @@
 function run {
   local COMMAND="$1"
   if cat package.json | grep '"dotenv":' >>/dev/null; then
+    if [ ! -z "$DEBUG" ]; then
+      dotenv -e .env${ENV:+.$ENV} -- bash -c 'echo '"$COMMAND"
+    fi
     dotenv -e .env${ENV:+.$ENV} -- bash -c "$COMMAND"
   elif cat package.json | grep '"dotenv-flow":' >>/dev/null; then
     NODE_ENV=${NODE_ENV:-$ENV} dotenv-flow -- bash -c "$COMMAND"
