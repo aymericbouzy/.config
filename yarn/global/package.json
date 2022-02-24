@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@prettier/plugin-ruby": "^2.0.0",
     "@types/node": "^17.0.18",
     "@vue/cli": "^4.5.13",
     "carotte-cli": "^2.1.1",
@@ -8,6 +9,7 @@
     "dotenv-cli": "^4.0.0",
     "dotenv-flow-cli": "^1.0.0",
     "nodemon": "^2.0.12",
+    "prettier": "^2.5.1",
     "react-native-cli": "^2.0.1",
     "retree-cli": "^0.3.1",
     "semver": "^7.3.5",
