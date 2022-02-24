@@ -28,12 +28,6 @@ function initdb {
   sql 'CREATE DATABASE IF NOT EXISTS \`${DB_DATABASE:-$MYSQL_DATABASE}\`;'
 }
 
-function testdb-flow {
-  local SQL='DROP DATABASE IF EXISTS \`${DB_DATABASE:-$MYSQL_DATABASE}\`; CREATE DATABASE \`${DB_DATABASE:-$MYSQL_DATABASE}\`;'
-  local COMMAND='MYSQL_PWD=${DB_PASS:-$MYSQL_PASSWORD} mysql -h ${DB_HOST:-$MYSQL_HOST} -u ${DB_USER:-$MYSQL_USER} -e "'$SQL'"'
-  NODE_ENV=test dotenv-flow -- bash -c $COMMAND
-}
-
 function tw {
   testdb
   if make help | grep test-init >>/dev/null; then
