@@ -1,9 +1,10 @@
 function focus {
-  local NEW_FOCUS="$(echo "$@")"
+  local focus="$(echo "$@")"
+  local focus_file="$HOME/.focus"
 
-  if [ -z "$NEW_FOCUS" ]; then
-    echo "$FOCUS" > /dev/stderr
+  if [ -z "$focus" ]; then
+    cat "$focus_file" > /dev/stderr
   else
-    export FOCUS="$NEW_FOCUS"
+    echo "$focus" > "$focus_file"
   fi
 }
