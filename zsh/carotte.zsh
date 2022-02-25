@@ -35,7 +35,8 @@ complete -F _yargs_completions carotte
 function krot {
   # usage: krot migration add-deliveries
   function migration {
-    filename=`date +%s`-$1.sql;
+    local name="$(echo "$@" | tr ' ' '-')"
+    filename=`date +%s`-$name.sql;
     migrationPath='migrations'
 
     if [ -d "migrations/prod" ]
@@ -44,7 +45,7 @@ function krot {
     fi
 
     touch $migrationPath/$filename;
-    echo "-- Migration: $1\n-- Created at: `date '+%F %H:%M:%S'`\n\n-- ====  UP  ====\n\n-- ==== DOWN ====" > $migrationPath/$filename;
+    echo "-- Migration: $name\n-- Created at: `date '+%F %H:%M:%S'`\n\n-- ====  UP  ====\n\n-- ==== DOWN ====" > $migrationPath/$filename;
 
     if [ -d "migrations/test" ]
     then
@@ -52,7 +53,7 @@ function krot {
       ln -s ../prod/$filename;
       cd ../..
     fi
-    echo "Successfully created $1 migration : ./$migrationPath/$filename"
+    echo "Successfully created migration $name: ./$migrationPath/$filename"
   }
 
   function create {
