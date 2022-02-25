@@ -2283,10 +2283,10 @@ carotte-amqp@^2.3.4:
     puid "^1.0.5"
     safe-clone-deep "^1.1.5"
 
-carotte-cli@^2.1.1:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/carotte-cli/-/carotte-cli-2.1.1.tgz#72fe2cc32695d4daeab24f7d2803f59588a9fa68"
-  integrity sha512-inOHHCMmuPuiNGEbYVGME6UOQs3a0kQ4LA96SowNZgshL1C69TtGt05zepysbIiZ15ixLoa68wUTH9+UI3bhWg==
+carotte-cli@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/carotte-cli/-/carotte-cli-2.2.0.tgz#d8fb1c535207e1f71eb86e5b5e1e33d816e6688b"
+  integrity sha512-UUqivFOxHgukIDwGwxt+ZGGvGAXAh6EkHkXiA/E5YNet2zuod/K+0QlL7SYlKoc9/v++qHQSwdbkREJ48dDSPQ==
   dependencies:
     ajv "^6.6.2"
     carotte-amqp "^2.3.4"

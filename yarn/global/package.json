@@ -3,7 +3,7 @@
     "@prettier/plugin-ruby": "^2.0.0",
     "@types/node": "^17.0.18",
     "@vue/cli": "^4.5.13",
-    "carotte-cli": "^2.1.1",
+    "carotte-cli": "^2.2.0",
     "carotte-rest-mapper": "^0.0.1",
     "dotenv": "^10.0.0",
     "dotenv-cli": "^4.0.0",
