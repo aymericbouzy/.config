@@ -46,7 +46,6 @@ function hotfix {
   git flow hotfix start "v$NEW"
   echo "You can now cherry pick some commits to the hotfix branch. Press Enter when done."
   read confirmation
-  yarn test
   npm version "$BUMP" -m "$MESSAGE"
   git flow hotfix finish "v$NEW"
   echo "Release *${PWD##*/} v$NEW*\n* $MESSAGE\n" | clipboard
