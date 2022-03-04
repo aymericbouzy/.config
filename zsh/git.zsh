@@ -53,3 +53,14 @@ alias grc="git rebase --continue"
 alias review="gh pr checkout"
 alias commit='git commit -m "$(input)"'
 alias gcaa="git commit -a --amend"
+
+function blame-ignore {
+  local COMMIT="$1"
+  echo "# Prettier"                                >> .git-blame-ignore-revs
+  echo "$COMMIT"                                   >> .git-blame-ignore-revs
+
+  echo "[blame]"                                   >> .gitconfig
+  echo "  ignoreRevsFile = .git-blame-ignore-revs" >> .gitconfig
+
+  git config include.path ../.gitconfig
+}
