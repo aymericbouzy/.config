@@ -22,11 +22,15 @@ function git-global-cherry-pick {
   git --git-dir=../$1/.git format-patch -k -1 --stdout $2 | git am --reject --whitespace=fix -C1
 }
 
-# usage: pr-cherry-pick 24
-function pr-cherry-pick {
+function pr-range {
   PR="$1"
   COMMIT="$(git log develop --grep "pull request #$PR from" -n 1 --merges --format=%H)"
-  git cherry-pick "$COMMIT^..$COMMIT^2"
+  echo "$COMMIT^..$COMMIT^2"
+}
+
+# usage: pr-cherry-pick 24
+function pr-cherry-pick {
+  git cherry-pick "$(pr-range "$1")"
 }
 
 # usage: mr-cherry-pick feature/OR-74-add-osv2-warehouse
