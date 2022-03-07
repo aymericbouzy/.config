@@ -16,3 +16,8 @@ cd() {
     n auto
   fi
 }
+
+function has-dep {
+  [ $(jq ".dependencies | has(\"$1\")" < package.json) = "true" ]
+  return $?
+}

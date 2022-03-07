@@ -1,11 +1,11 @@
 function run {
   local COMMAND="$1"
-  if cat package.json | grep '"dotenv":' >>/dev/null; then
+  if has-dep dotenv; then
     if [ ! -z "$DEBUG" ]; then
       dotenv -e .env${ENV:+.$ENV} -- bash -c 'echo '"$COMMAND"
     fi
     dotenv -e .env${ENV:+.$ENV} -- bash -c "$COMMAND"
-  elif cat package.json | grep '"dotenv-flow":' >>/dev/null; then
+  elif has-dep dotenv-flow; then
     NODE_ENV=${NODE_ENV:-$ENV} dotenv-flow -- bash -c "$COMMAND"
   else
     echo "You must be using dotenv or dotenv flow in the repo" >>/dev/stderr
