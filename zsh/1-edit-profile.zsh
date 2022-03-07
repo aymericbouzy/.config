@@ -6,11 +6,15 @@ function config {
   code -n ~/.config
   read confirmation
   echo "Reloading 🕐"
-  reload
+  reload $confirmation
   echo "Reloaded ✅"
 }
 
 # Reload profile
 function reload {
-  source "$PROFILE"
+  if [ ! -z "$1" ]; then
+    source "$HOME/.config/zsh/$1.zsh"
+  else
+    source "$PROFILE"
+  fi
 }
