@@ -48,7 +48,7 @@ function auto-review-retry {
 }
 
 # git alias
-alias gri="git rebase -i develop --autosquash"
+alias gri="git rebase -i origin/develop --autosquash"
 alias grc="git rebase --continue"
 alias review="gh pr checkout"
 alias commit='git commit -m "$(input)"'
