@@ -24,6 +24,11 @@ function ms {
   node -e 'console.log(Date.now())'
 }
 
+# Displays the number of ms since Unix Epoch
+function now {
+  node -e 'console.log(new Date().toISOString())'
+}
+
 # prefix to any command to know how much time it lasted
 function chrono {
   local START=$(ms)
