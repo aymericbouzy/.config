@@ -22,6 +22,11 @@ function sql {
 function testdb {
   echo "Recreating test database \`$(ENV=test run 'echo "${DB_DATABASE:-$MYSQL_DATABASE}"')\`"
   ENV=test sql 'DROP DATABASE IF EXISTS \`${DB_DATABASE:-$MYSQL_DATABASE}\`; CREATE DATABASE \`${DB_DATABASE:-$MYSQL_DATABASE}\`;'
+  if make help | grep test-init >>/dev/null; then
+    make test-init
+  else
+    make init-test
+  fi
 }
 
 function initdb {
@@ -30,11 +35,6 @@ function initdb {
 
 function tw {
   testdb
-  if make help | grep test-init >>/dev/null; then
-    make test-init
-  else
-    make init-test
-  fi
   yarn test:watch
 }
 
