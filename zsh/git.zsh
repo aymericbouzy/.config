@@ -64,3 +64,8 @@ function blame-ignore {
 
   git config include.path ../.gitconfig
 }
+
+function pending-release {
+  git fetch
+  git log origin/master..origin/develop --oneline
+}
