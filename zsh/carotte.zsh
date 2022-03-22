@@ -83,5 +83,14 @@ function krot {
     create listener "$1"
   }
 
+  function start {
+    if jq -e '.scripts | has("serve:watch")' package.json >>/dev/null; then
+      NODE_ENV=staging make init
+      NODE_ENV=staging yarn serve:watch
+    else
+      NODE_ENV=staging make run-watch
+    fi
+  }
+
   "$@"
 }
