@@ -14,6 +14,7 @@ function git-sync {
     git switch develop
     git pull
   fi
+  ensure-node-version
 }
 alias gs="git-sync"
 

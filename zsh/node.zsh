@@ -10,11 +10,18 @@ function defnode {
 }
 
 # auto detect node version
-cd() {
-  builtin cd "$@"
+function ensure-node-version {
   if [ -f .nvmrc ] && ! semver -r "$(cat .nvmrc)" "$(node --version)" > /dev/null; then
     n auto
+    if [ -f yarn.lock ]; then
+      yarn
+    fi
   fi
+}
+
+cd() {
+  builtin cd "$@"
+  ensure-node-version
 }
 
 function has-dep {
