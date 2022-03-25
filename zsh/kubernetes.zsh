@@ -1,3 +1,6 @@
+source <(kubectl completion zsh)
+
+alias k="kubectl"
 
 function kube-staging {
   kubectx staging
