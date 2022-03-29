@@ -54,6 +54,7 @@ alias grc="git rebase --continue"
 alias review="gh pr checkout"
 alias commit='git commit -m "$(input)"'
 alias gcaa="git commit -a --amend"
+alias gg="git log --graph --oneline --branches"
 
 function blame-ignore {
   local COMMIT="$1"
