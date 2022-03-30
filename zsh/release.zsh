@@ -8,7 +8,9 @@ function release {
   git-sync
   git flow init -d
   git flow release start "v$NEW"
-  npm version "$BUMP" -m "$MESSAGE"
+  npm version "$BUMP" -m "release: bump to v$NEW"'
+
+'"$MESSAGE"
   git flow release finish "v$NEW"
 
   echo "Release *${PWD##*/} v$NEW*\n* $MESSAGE\n" | clipboard
@@ -46,7 +48,9 @@ function hotfix {
   git flow hotfix start "v$NEW"
   echo "You can now cherry pick some commits to the hotfix branch. Press Enter when done."
   read confirmation
-  npm version "$BUMP" -m "$MESSAGE"
+  npm version "$BUMP" -m "release: bump to v$NEW"'
+
+'"$MESSAGE"
   git flow hotfix finish "v$NEW"
   echo "Release *${PWD##*/} v$NEW*\n* $MESSAGE\n" | clipboard
 }
