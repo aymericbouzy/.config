@@ -15,13 +15,23 @@ function run {
 
 function sql {
   local SCRIPT="$1"
-  local USE_DATABASE='CREATE DATABASE IF NOT EXISTS \`${DB_DATABASE:-$MYSQL_DATABASE}\`; USE \`${DB_DATABASE:-$MYSQL_DATABASE}\`'
-  run 'MYSQL_PWD=${DB_PASS:-$MYSQL_PASSWORD} mysql -h ${DB_HOST:-$MYSQL_HOST} --port ${DB_PORT:-${MYSQL_PORT:-3306}} -u ${DB_USER:-$MYSQL_USER} -e "'"$USE_DATABASE; $SCRIPT"'"'
+  if has-dep pg; then
+    run 'PGPASSWORD=$POSTGRESQL_PASSWORD psql -d $POSTGRESQL_DATABASE -U $POSTGRESQL_USER -h $POSTGRESQL_HOST -p $POSTGRESQL_PORT -c "'"$SCRIPT"'"'
+  else
+    local USE_DATABASE='USE \`${DB_DATABASE:-$MYSQL_DATABASE}\`'
+    run 'MYSQL_PWD=${DB_PASS:-$MYSQL_PASSWORD} mysql -h ${DB_HOST:-$MYSQL_HOST} --port ${DB_PORT:-${MYSQL_PORT:-3306}} -u ${DB_USER:-$MYSQL_USER} -e "'"$USE_DATABASE; $SCRIPT"'"'
+  fi
 }
 
 function testdb {
-  echo "Recreating test database \`$(ENV=test run 'echo "${DB_DATABASE:-$MYSQL_DATABASE}"')\`"
-  ENV=test sql 'DROP DATABASE IF EXISTS \`${DB_DATABASE:-$MYSQL_DATABASE}\`; CREATE DATABASE \`${DB_DATABASE:-$MYSQL_DATABASE}\`;'
+  if has-dep pg; then
+    echo "Recreating test schema"
+    ENV=test initdb
+    ENV=test sql 'DROP SCHEMA public CASCADE; CREATE SCHEMA public;'
+  else
+    echo "Recreating test database \`$(ENV=test run 'echo "${DB_DATABASE:-$MYSQL_DATABASE}"')\`"
+    ENV=test sql 'DROP DATABASE IF EXISTS \`$DATABASE\`; CREATE DATABASE \`$DATABASE\`;'
+  fi
   if make help | grep test-init >>/dev/null; then
     make test-init
   else
@@ -30,7 +40,15 @@ function testdb {
 }
 
 function initdb {
-  sql 'CREATE DATABASE IF NOT EXISTS \`${DB_DATABASE:-$MYSQL_DATABASE}\`;'
+  if has-dep pg; then
+    if sql $'SELECT FROM pg_database WHERE datname = \'$POSTGRESQL_DATABASE\'' | grep "1 row" >>/dev/null; then
+    else
+      local SCRIPT='CREATE DATABASE $POSTGRESQL_DATABASE'
+      run $'PGPASSWORD=$POSTGRESQL_PASSWORD psql -d postgres -U $POSTGRESQL_USER -h $POSTGRESQL_HOST -p $POSTGRESQL_PORT -c "'"$SCRIPT"'"'
+    fi
+  else
+    sql 'CREATE DATABASE IF NOT EXISTS \`${DB_DATABASE:-$MYSQL_DATABASE}\`;'
+  fi
 }
 
 function tw {
