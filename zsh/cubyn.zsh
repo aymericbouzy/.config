@@ -16,7 +16,7 @@ function run {
 function sql {
   local SCRIPT="$1"
   if has-dep pg; then
-    run 'PGPASSWORD=$POSTGRESQL_PASSWORD psql -d $POSTGRESQL_DATABASE -U $POSTGRESQL_USER -h $POSTGRESQL_HOST -p $POSTGRESQL_PORT -c "'"$SCRIPT"'"'
+    run 'PGPASSWORD=$POSTGRESQL_PASSWORD psql -d '"${DATABASE:-'$POSTGRESQL_DATABASE'}"' -U $POSTGRESQL_USER -h $POSTGRESQL_HOST -p $POSTGRESQL_PORT -c "'"$SCRIPT"'"'
   else
     local USE_DATABASE='USE \`${DB_DATABASE:-$MYSQL_DATABASE}\`'
     run 'MYSQL_PWD=${DB_PASS:-$MYSQL_PASSWORD} mysql -h ${DB_HOST:-$MYSQL_HOST} --port ${DB_PORT:-${MYSQL_PORT:-3306}} -u ${DB_USER:-$MYSQL_USER} -e "'"$USE_DATABASE; $SCRIPT"'"'
@@ -41,10 +41,9 @@ function testdb {
 
 function initdb {
   if has-dep pg; then
-    if sql $'SELECT FROM pg_database WHERE datname = \'$POSTGRESQL_DATABASE\'' | grep "1 row" >>/dev/null; then
-    else
-      local SCRIPT='CREATE DATABASE $POSTGRESQL_DATABASE'
-      run $'PGPASSWORD=$POSTGRESQL_PASSWORD psql -d postgres -U $POSTGRESQL_USER -h $POSTGRESQL_HOST -p $POSTGRESQL_PORT -c "'"$SCRIPT"'"'
+    local DEFAULT_DATABASE=postgres
+    if ! DATABASE=$DEFAULT_DATABASE sql $'SELECT FROM pg_database WHERE datname = \'$POSTGRESQL_DATABASE\'' | grep "1 row" >>/dev/null; then
+      DATABASE=$DEFAULT_DATABASE sql 'CREATE DATABASE $POSTGRESQL_DATABASE'
     fi
   else
     sql 'CREATE DATABASE IF NOT EXISTS \`${DB_DATABASE:-$MYSQL_DATABASE}\`;'
