@@ -68,9 +68,9 @@ function shmig {
     local MIGRATIONS_DIRECTORY="migrations"
   fi
   if has-dep pg; then
-    run './shmig -t postgresql -l $POSTGRESQL_USER -p $POSTGRESQL_PASSWORD -d $POSTGRESQL_DATABASE -H $POSTGRESQL_HOST -P $POSTGRESQL_PORT -m '"$MIGRATIONS_DIRECTORY"' -s migrations '"$@"
+    ENV=${ENV:-test} run './shmig -t postgresql -l $POSTGRESQL_USER -p $POSTGRESQL_PASSWORD -d $POSTGRESQL_DATABASE -H $POSTGRESQL_HOST -P $POSTGRESQL_PORT -m '"$MIGRATIONS_DIRECTORY"' -s migrations '"$@"
   else
-    run './shmig -t mysql -l ${DB_USER:-$MYSQL_USER} -p ${DB_PASS:-$MYSQL_PASSWORD} -d ${DB_DATABASE:-$MYSQL_DATABASE} -H ${DB_HOST:-${MYSQL_HOST:-localhost}} -P ${DB_PORT:-${MYSQL_PORT:-3306}} -m '"$MIGRATIONS_DIRECTORY"' -s migrations '"$@"
+    ENV=${ENV:-test} run './shmig -t mysql -l ${DB_USER:-$MYSQL_USER} -p ${DB_PASS:-$MYSQL_PASSWORD} -d ${DB_DATABASE:-$MYSQL_DATABASE} -H ${DB_HOST:-${MYSQL_HOST:-localhost}} -P ${DB_PORT:-${MYSQL_PORT:-3306}} -m '"$MIGRATIONS_DIRECTORY"' -s migrations '"$@"
   fi
 }
 
