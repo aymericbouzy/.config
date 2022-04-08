@@ -87,10 +87,10 @@ function krot {
   function start {
     ensure-node-version
     if jq -e '.scripts | has("serve:watch")' package.json >>/dev/null; then
-      NODE_ENV=staging make init
-      NODE_ENV=staging yarn serve:watch
+      NODE_ENV=${NODE_ENV:-staging} make init
+      NODE_ENV=${NODE_ENV:-staging} yarn serve:watch
     else
-      NODE_ENV=staging make run-watch
+      NODE_ENV=${NODE_ENV:-staging} make run-watch
     fi
   }
 
