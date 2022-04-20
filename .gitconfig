@@ -5,24 +5,72 @@
 [commit]
 	gpgsign = true
 [pull]
-	rebase = true
+	rebase = merges
 [core]
 	editor = code --wait
 [diff]
 	tool = default-difftool
+	mnemonicPrefix = true
+	renames = copies
+	colorMoved = default
+	colorMovedWs = allow-indentation-change
 [difftool "default-difftool"]
 	cmd = code --wait --diff $LOCAL $REMOTE
 [alias]
-	co = checkout
-	ci = commit
-	st = status
-	unstage = reset HEAD --
-	last = log -1 HEAD
+	# shortcuts
+	ci = commit --patch
+	sw = switch
+	rb = rebase
+	l = log --graph
+	st = status --short
+	# common operations
+	start = switch --create -u
+	staged = diff --cached
+	wip = stash push --include-untracked
+	branches = branch -vv
+	fixup = commit --patch --fixup
+	amend = commit --patch --amend
+	publish = push -u
 [rebase]
 	autoStash = true
+	autoSquash = true
+	forkPoint = true
 [push]
 	default = current
+	followTags = true
 [pager]
-	log  = diffr | less
+	log = diffr | less
 	show = diffr | less
 	diff = diffr | less
+[rerere]
+	enabled = true
+[help]
+	autocorrect = prompt
+[stash]
+	showIncludeUntracked = true
+[log]
+	abbrevCommit = true
+	date = human
+	follow = true
+[format]
+	pretty = reference
+[blame]
+	coloring = highlightRecent
+	date = human
+[remote]
+	pushDefault = origin
+[checkout]
+	defaultRemote = origin
+[column]
+	ui = auto
+[branch]
+	autoSetupMerge = true
+[merge]
+	conflictStyle = zdiff3
+	log = 1000
+	autoStash = true
+[tag]
+	sort = -version:refname
+	forceSignAnnotated = true
+[versionsort]
+	suffix = ""
