@@ -1,0 +1,28 @@
+[user]
+	name = aymeric bouzy
+	email = 8168981+aymericbouzy@users.noreply.github.com
+	signingkey = 8168981+aymericbouzy@users.noreply.github.com
+[commit]
+	gpgsign = true
+[pull]
+	rebase = true
+[core]
+	editor = code --wait
+[diff]
+	tool = default-difftool
+[difftool "default-difftool"]
+	cmd = code --wait --diff $LOCAL $REMOTE
+[alias]
+	co = checkout
+	ci = commit
+	st = status
+	unstage = reset HEAD --
+	last = log -1 HEAD
+[rebase]
+	autoStash = true
+[push]
+	default = current
+[pager]
+	log  = diffr | less
+	show = diffr | less
+	diff = diffr | less
