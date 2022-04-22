@@ -79,7 +79,6 @@ function deploy {
   git push
   git switch master
   git push
-  git push --tags
   open "https://app.circleci.com/pipelines/github/cubyn?filter=mine" &
   local SERVICE="${PWD##*/}"
   open "https://app.datadoghq.com/logs?query=%40env%3Aproduction%20service%3A$SERVICE%20-status%3Ainfo&agg_m=count&agg_q=status%2C%40custom.errorString.type&agg_t=count&index=&integration_id=&integration_short_name=&saved_view=68807&sort_m=%2C&sort_t=%2C&step=604800000&top_n=10%2C10&top_o=top%2Ctop&viz=timeseries&from_ts=1630337303060&to_ts=1630340903060&live=true" &

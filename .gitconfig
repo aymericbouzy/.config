@@ -19,18 +19,20 @@
 [alias]
 	# shortcuts
 	ci = commit --patch
-	sw = switch
-	rb = rebase
-	l = log --graph
+	sw = switch --merge
+	rb = rebase --interactive
+	l = log --graph --oneline
 	st = status --short
+	d = diff --ignore-space-change
 	# common operations
-	start = switch --create -u
+	start = switch --create
 	staged = diff --cached
 	wip = stash push --include-untracked
 	branches = branch -vv
 	fixup = commit --patch --fixup
 	amend = commit --patch --amend
 	publish = push -u
+	pr = log --patch --format=medium --reverse
 [rebase]
 	autoStash = true
 	autoSquash = true
@@ -42,6 +44,8 @@
 	log = diffr | less
 	show = diffr | less
 	diff = diffr | less
+[interactive]
+  diffFilter = diffr
 [rerere]
 	enabled = true
 [help]
@@ -52,8 +56,10 @@
 	abbrevCommit = true
 	date = human
 	follow = true
-[format]
-	pretty = reference
+# [format]
+# 	pretty = simple
+[pretty]
+  simple = %C(auto)%h %C(dim white)%<(20)%ad %C(reset)%s
 [blame]
 	coloring = highlightRecent
 	date = human

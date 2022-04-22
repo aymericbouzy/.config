@@ -7,17 +7,18 @@ function git-branch-exists {
 # sync master and develop with origin
 function git-sync {
   if git-branch-exists master; then
-    git switch master
+    git sw master
     git pull
   fi
   if git-branch-exists develop; then
-    git switch develop
+    git sw develop
     git pull
   fi
   ensure-node-version
 }
 alias gs="git-sync"
 
+# TODO: use remote instead
 # usage: git-global-cherry-pick ~/Dev/cubyn/service-parcel 5ab7a68
 function git-global-cherry-pick {
   git --git-dir=$1/.git format-patch -k -1 --stdout $2 | git am --reject --whitespace=fix -C1
@@ -49,12 +50,12 @@ function auto-review-retry {
 }
 
 # git alias
-alias gri="git rebase -i origin/develop --autosquash"
+alias gri="git rb origin/develop"
 alias grc="git rebase --continue"
-alias review="gh pr checkout"
-alias commit='git commit -m "$(input)"'
-alias gcaa="git commit -a --amend"
 alias gg="git log --graph --oneline --branches"
+
+alias m="git sw master && git pull"
+alias d="git sw develop && git pull"
 
 function blame-ignore {
   local COMMIT="$1"
@@ -70,4 +71,8 @@ function blame-ignore {
 function pending-release {
   git fetch
   git log origin/master..origin/develop --oneline
+}
+
+function git-post-checkout {
+  ensure-node-version
 }
