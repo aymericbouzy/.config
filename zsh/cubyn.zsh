@@ -30,7 +30,7 @@ function testdb {
     ENV=test sql 'DROP SCHEMA public CASCADE; CREATE SCHEMA public;'
   else
     echo "Recreating test database \`$(ENV=test run 'echo "${DB_DATABASE:-$MYSQL_DATABASE}"')\`"
-    ENV=test sql 'DROP DATABASE IF EXISTS \`$DATABASE\`; CREATE DATABASE \`$DATABASE\`;'
+    ENV=test sql 'DROP DATABASE IF EXISTS \`${DB_DATABASE:-$MYSQL_DATABASE}\`; CREATE DATABASE \`${DB_DATABASE:-$MYSQL_DATABASE}\`;'
   fi
   if make help | grep test-init >>/dev/null; then
     make test-init
