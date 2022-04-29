@@ -1,4 +1,5 @@
 # https://starship.rs/config/
+"$schema" = 'https://starship.rs/config-schema.json'
 
 command_timeout = 800
 
