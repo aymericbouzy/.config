@@ -8,6 +8,7 @@
 	rebase = merges
 [core]
 	editor = code --wait
+	hooksPath = /Users/aymeric/.config/git/hooks
 [diff]
 	tool = default-difftool
 	mnemonicPrefix = true
