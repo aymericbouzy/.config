@@ -2,3 +2,6 @@
 
 [gcloud]
 disabled = true
+
+[git_branch]
+truncation_length = 30
