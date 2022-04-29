@@ -5,3 +5,6 @@ disabled = true
 
 [git_branch]
 truncation_length = 30
+
+[kubernetes]
+disabled = false
