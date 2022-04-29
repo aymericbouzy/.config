@@ -14,7 +14,7 @@ function git-sync {
     git sw develop
     git pull
   fi
-  ensure-node-version
+  install-deps
 }
 alias gs="git-sync"
 
@@ -71,10 +71,6 @@ function blame-ignore {
 function pending-release {
   git fetch
   git log origin/master..origin/develop --oneline
-}
-
-function git-post-checkout {
-  ensure-node-version
 }
 
 # from https://polothy.github.io/post/2019-08-19-fzf-git-checkout/

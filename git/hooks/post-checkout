@@ -1,4 +1,4 @@
 #!/bin/zsh
 
 source $HOME/.config/zsh/node.zsh
-ensure-node-version
+install-deps

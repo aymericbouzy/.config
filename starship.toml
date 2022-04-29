@@ -1,5 +1,7 @@
 # https://starship.rs/config/
 
+command_timeout = 800
+
 [gcloud]
 disabled = true
 
