@@ -13,3 +13,5 @@ source /usr/local/etc/profile.d/z.sh
 
 # syntax highlighting
 source /usr/local/opt/zsh-fast-syntax-highlighting/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
+
+alias c=clear
