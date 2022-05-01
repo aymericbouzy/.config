@@ -21,12 +21,12 @@ function csv-to-sql {
 
 # Displays the number of ms since Unix Epoch
 function ms {
-  node -e 'console.log(Date.now())'
+  gdate +%s%3N
 }
 
 # Displays the number of ms since Unix Epoch
 function now {
-  node -e 'console.log(new Date().toISOString())'
+  gdate -u +"%Y-%m-%dT%H:%M:%S.%3NZ"
 }
 
 # prefix to any command to know how much time it lasted
