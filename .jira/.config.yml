@@ -1,0 +1,35 @@
+board:
+  id: 117
+  name: TMS board
+  type: simple
+epic:
+  name: ""
+  link: ""
+installation: Cloud
+issue:
+  types:
+  - id: "10339"
+    name: Story
+    handle: Story
+    subtask: false
+  - id: "10340"
+    name: Task
+    handle: Task
+    subtask: false
+  - id: "10341"
+    name: Bug
+    handle: Bug
+    subtask: false
+  - id: "10342"
+    name: Epic
+    handle: Epic
+    subtask: false
+  - id: "10343"
+    name: Subtask
+    handle: Subtask
+    subtask: true
+login: aymeric.bouzy@cubyn.com
+project:
+  key: TMS
+  type: next-gen
+server: https://cubynjira.atlassian.net
