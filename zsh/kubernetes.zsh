@@ -30,6 +30,9 @@ function kube-current-context {
   kubectl config view -o jsonpath='{.current-context}'
 }
 
+alias kn=kubens
+alias kx=kubectx
+
 function get-pod {
   SERVICE="$1"
   kubectl get pods | grep "$SERVICE" | head -1 | sed -E "s/^($SERVICE-[0-9a-z]{9,10}-[0-9a-z]{5}).*$/\1/"
