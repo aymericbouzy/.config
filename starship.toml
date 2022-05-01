@@ -14,6 +14,7 @@ symbol = " "
 disabled = false
 format = '[$symbol $context]($style) in '
 symbol = "⎈ "
+style = "#326ce5 bold"
 
 [kubernetes.context_aliases]
 "staging" = "stag."
