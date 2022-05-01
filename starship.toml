@@ -8,6 +8,20 @@ disabled = true
 
 [git_branch]
 truncation_length = 30
+symbol = " "
 
 [kubernetes]
 disabled = false
+format = '[$symbol $context]($style) in '
+symbol = "⎈ "
+
+[kubernetes.context_aliases]
+"staging" = "stag."
+"production" = "prod."
+"sandbox" = "sand."
+
+[nodejs]
+symbol = " "
+
+[package]
+symbol = ""
