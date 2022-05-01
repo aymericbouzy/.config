@@ -1,4 +1,6 @@
-eval "$(nodenv init -)"
+if which nodenv >>/dev/null; then
+  eval "$(nodenv init - --no-rehash)"
+fi
 
 function defnode {
   local VERSION="$1"
