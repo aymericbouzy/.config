@@ -1,7 +1,7 @@
-export CAROTTE_HOST="rabbitmq:5675"
+export CAROTTE_HOST=rabbit.private-staging.playship.co
 export AMQP_HOST="$CAROTTE_HOST"
-export CAROTTE_CLI_USER="aymeric_bouzy"
-export CAROTTE_DEBUG_TOKEN="aymericb"
+export CAROTTE_CLI_USER=aymeric_bouzy
+export CAROTTE_DEBUG_TOKEN=aymericb
 
 ###-begin-carotte-completions-###
 #
