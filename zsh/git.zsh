@@ -10,6 +10,10 @@ function git-sync {
     git sw master
     git pull
   fi
+  if git-branch-exists main; then
+    git sw main
+    git pull
+  fi
   if git-branch-exists develop; then
     git sw develop
     git pull
@@ -54,7 +58,7 @@ alias gri="git rb origin/develop"
 alias grc="git rebase --continue"
 alias gg="git log --graph --oneline --branches"
 
-alias m="git sw master && git pull"
+alias m='git sw $(if git-branch-exists master; then echo master; else echo main; fi) && git pull'
 alias d="git sw develop && git pull"
 
 function blame-ignore {
