@@ -51,8 +51,11 @@ function initdb {
 }
 
 function tw {
-  testdb
-  yarn test:watch
+  (
+    set -e
+    testdb
+    yarn test:watch
+  )
 }
 
 # available: rabbitmq sftp mongodb elasticsearch product-elasticsearch mysql
