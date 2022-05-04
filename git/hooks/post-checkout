@@ -1,4 +1,0 @@
-#!/bin/zsh
-
-source $HOME/.config/zsh/node.zsh
-install-deps
