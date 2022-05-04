@@ -34,6 +34,8 @@ function testdb {
   fi
   if make help | grep test-init >>/dev/null; then
     make test-init
+  elif make help | grep test-unit-init >>/dev/null; then
+    make test-unit-init
   else
     make init-test
   fi
@@ -54,7 +56,13 @@ function tw {
   (
     set -e
     testdb
-    yarn test:watch
+    if jq '.scripts | has("test:unit:watch")' package.json -e >>/dev/null; then
+      yarn test:unit:watch
+    elif jq '.scripts | has("test:watch")' package.json -e >>/dev/null; then
+      yarn test:watch
+    else
+      yarn test --watch
+    fi
   )
 }
 
