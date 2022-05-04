@@ -74,7 +74,7 @@ function blame-ignore {
 
 function pending-release {
   git fetch
-  git log origin/master..origin/develop --oneline
+  git l origin/master..origin/develop "$@"
 }
 
 # from https://polothy.github.io/post/2019-08-19-fzf-git-checkout/
