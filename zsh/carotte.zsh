@@ -50,9 +50,10 @@ function krot {
 
     if [ -d "migrations/test" ]
     then
-      cd migrations/test;
-      ln -s ../prod/$filename;
-      cd ../..
+      (
+        cd migrations/test;
+        ln -s ../prod/$filename;
+      )
     fi
     echo "Successfully created migration $name: ./$migrationPath/$filename"
   }
