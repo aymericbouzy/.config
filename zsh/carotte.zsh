@@ -56,6 +56,8 @@ function krot {
       )
     fi
     echo "Successfully created migration $name: ./$migrationPath/$filename"
+
+    code "./$migrationPath/$filename"
   }
 
   function create {
