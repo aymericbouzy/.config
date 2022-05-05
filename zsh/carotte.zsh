@@ -59,13 +59,16 @@ function krot {
   }
 
   function start {
-    install-deps
-    if jq -e '.scripts | has("serve:watch")' package.json >>/dev/null; then
-      NODE_ENV=${NODE_ENV:-staging} make init
-      NODE_ENV=${NODE_ENV:-staging} yarn serve:watch
-    else
-      NODE_ENV=${NODE_ENV:-staging} make run-watch
-    fi
+    (
+      set -e
+      install-deps
+      if jq -e '.scripts | has("serve:watch")' package.json >>/dev/null; then
+        NODE_ENV=${NODE_ENV:-staging} make init
+        NODE_ENV=${NODE_ENV:-staging} yarn serve:watch
+      else
+        NODE_ENV=${NODE_ENV:-staging} make run-watch
+      fi
+    )
   }
 
   # useful to monitor rollout of deployment
