@@ -22,7 +22,7 @@
 	ci = commit --patch
 	sw = switch --merge
 	rb = rebase --interactive
-	l = log --graph --oneline
+	l = log --graph --format=simple
 	st = status --short
 	d = diff --ignore-space-change
 	# common operations
@@ -60,7 +60,7 @@
 # [format]
 # 	pretty = simple
 [pretty]
-  simple = %C(auto)%h %C(dim white)%<(20)%ad %C(reset)%s
+  simple = %C(auto)%h %C(dim blue)%<(9,trunc)%an %C(dim white)%<(16,trunc)%ar %C(auto)%d %C(reset)%s
 [blame]
 	coloring = highlightRecent
 	date = human
