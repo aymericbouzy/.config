@@ -21,7 +21,7 @@
 	# shortcuts
 	ci = commit --patch
 	sw = switch --merge
-	rb = rebase --interactive
+	rb = rebase --interactive --merge --strategy-option=ignore-space-change
 	l = log --graph --format=simple
 	st = status --short
 	d = diff --ignore-space-change
