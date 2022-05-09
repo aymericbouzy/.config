@@ -79,7 +79,7 @@ function tw {
   )
 }
 
-# available: rabbitmq sftp mongodb elasticsearch product-elasticsearch mysql
+# available: rabbitmq sftp mongodb elasticsearch product-elasticsearch mysql postgres
 function devenv {
   (
     cd $HOME/Dev/cubyn/infra-docker-compose
