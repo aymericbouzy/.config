@@ -21,12 +21,12 @@
 	# shortcuts
 	ci = commit --patch
 	sw = switch --merge
-	rb = rebase --interactive --merge --strategy-option=ignore-space-change
+	rb = !git-rb
 	l = log --graph --format=simple
 	st = status --short
 	d = diff --ignore-space-change
 	# common operations
-	start = switch --create
+	start = !git-start
 	staged = diff --cached
 	wip = stash push --include-untracked
 	branches = branch -vv
@@ -71,7 +71,7 @@
 [column]
 	ui = auto
 [branch]
-	autoSetupMerge = true
+	autoSetupRebase = remote
 [merge]
 	conflictStyle = zdiff3
 	log = 1000

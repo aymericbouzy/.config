@@ -1,0 +1,6 @@
+#! /bin/zsh
+
+local branch="$(echo "$@" | tr ' ' '-')"
+local base="$(git branch --show-current)"
+git switch --create "$branch"
+git config "branch.$branch.base" "$base"

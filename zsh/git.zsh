@@ -109,3 +109,5 @@ function switch {
 }
 
 alias sw=switch
+
+export PATH=$PATH:$HOME/.config/git/commands
