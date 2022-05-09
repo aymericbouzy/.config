@@ -68,7 +68,7 @@ function initdb {
 function tw {
   (
     set -e
-    testdb
+    ENV=test initdb
     if jq '.scripts | has("test:unit:watch")' package.json -e >>/dev/null; then
       yarn test:unit:watch
     elif jq '.scripts | has("test:watch")' package.json -e >>/dev/null; then
