@@ -69,6 +69,7 @@ function tw {
   (
     set -e
     ENV=${ENV:-test} initdb
+    ENV=${ENV:-test} shmig up
     if jq '.scripts | has("test:unit:watch")' package.json -e >>/dev/null; then
       yarn test:unit:watch
     elif jq '.scripts | has("test:watch")' package.json -e >>/dev/null; then
