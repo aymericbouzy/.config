@@ -25,6 +25,7 @@
 	l = log --graph --format=simple
 	st = status --short
 	d = diff --ignore-space-change
+	br = branch
 	# common operations
 	start = !git-start
 	staged = diff --cached
