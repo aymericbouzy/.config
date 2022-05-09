@@ -23,6 +23,19 @@ function sql {
   fi
 }
 
+function shmig {
+  if [ -d migrations/prod ]; then
+    local MIGRATIONS_DIRECTORY="migrations/prod"
+  else
+    local MIGRATIONS_DIRECTORY="migrations"
+  fi
+  if has-dep pg; then
+    ENV=${ENV:-test} run './shmig -t postgresql -l $POSTGRESQL_USER -p $POSTGRESQL_PASSWORD -d $POSTGRESQL_DATABASE -H $POSTGRESQL_HOST -P $POSTGRESQL_PORT -m '"$MIGRATIONS_DIRECTORY"' -s migrations '"$@"
+  else
+    ENV=${ENV:-test} run './shmig -t mysql -l ${DB_USER:-$MYSQL_USER} -p ${DB_PASS:-$MYSQL_PASSWORD} -d ${DB_DATABASE:-$MYSQL_DATABASE} -H ${DB_HOST:-${MYSQL_HOST:-localhost}} -P ${DB_PORT:-${MYSQL_PORT:-3306}} -m '"$MIGRATIONS_DIRECTORY"' -s migrations '"$@"
+  fi
+}
+
 function testdb {
   if has-dep pg; then
     echo "Recreating test schema"
@@ -71,19 +84,6 @@ alias devenv="cd $HOME/Dev/cubyn/infra-docker-compose; docker-compose -f datasou
 
 # helm
 export CUBYN_HELM_PATH="$HOME/Dev/cubyn/helm"
-
-function shmig {
-  if [ -d migrations/prod ]; then
-    local MIGRATIONS_DIRECTORY="migrations/prod"
-  else
-    local MIGRATIONS_DIRECTORY="migrations"
-  fi
-  if has-dep pg; then
-    ENV=${ENV:-test} run './shmig -t postgresql -l $POSTGRESQL_USER -p $POSTGRESQL_PASSWORD -d $POSTGRESQL_DATABASE -H $POSTGRESQL_HOST -P $POSTGRESQL_PORT -m '"$MIGRATIONS_DIRECTORY"' -s migrations '"$@"
-  else
-    ENV=${ENV:-test} run './shmig -t mysql -l ${DB_USER:-$MYSQL_USER} -p ${DB_PASS:-$MYSQL_PASSWORD} -d ${DB_DATABASE:-$MYSQL_DATABASE} -H ${DB_HOST:-${MYSQL_HOST:-localhost}} -P ${DB_PORT:-${MYSQL_PORT:-3306}} -m '"$MIGRATIONS_DIRECTORY"' -s migrations '"$@"
-  fi
-}
 
 # usage: s3 /kyivl54o000a30ebe94xncgd.xlsx
 function s3 {
