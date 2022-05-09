@@ -17,3 +17,6 @@ configstore/update-notifier-patch-package.json
 # cache
 **/node_modules
 **/__pycache__
+
+# iterm2
+iterm2
