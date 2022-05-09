@@ -80,7 +80,12 @@ function tw {
 }
 
 # available: rabbitmq sftp mongodb elasticsearch product-elasticsearch mysql
-alias devenv="cd $HOME/Dev/cubyn/infra-docker-compose; docker-compose -f datasources.yml up"
+function devenv {
+  (
+    cd $HOME/Dev/cubyn/infra-docker-compose
+    docker-compose -f datasources.yml up "$@"
+  )
+}
 
 # helm
 export CUBYN_HELM_PATH="$HOME/Dev/cubyn/helm"
