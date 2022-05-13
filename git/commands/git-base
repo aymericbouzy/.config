@@ -1,0 +1,9 @@
+#! /bin/zsh
+
+local branch="$(git branch --show-current)"
+
+if [ -z "$1" ]; then
+  git config --get "branch.$branch.base"
+else
+  git config "branch.$branch.base" "$1"
+fi

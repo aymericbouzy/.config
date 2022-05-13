@@ -1,0 +1,3 @@
+#! /bin/zsh
+
+git log --patch --format=medium --reverse $(git base)..

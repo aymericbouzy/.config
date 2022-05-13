@@ -34,7 +34,8 @@
 	fixup = commit --patch --fixup
 	amend = commit --patch --amend
 	publish = push -u
-	pr = log --patch --format=medium --reverse
+	pr = !git-pr
+	base = !git-base
 [rebase]
 	autoStash = true
 	autoSquash = true
