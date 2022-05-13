@@ -1,4 +1,3 @@
 #! /bin/zsh
 
-local branch="$(git branch --show-current)"
-git rebase --interactive --merge --strategy-option=ignore-space-change "$(git config --get "branch.$branch.base")"
+git rebase --interactive $(git base) "$@"
