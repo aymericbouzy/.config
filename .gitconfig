@@ -36,6 +36,7 @@
 	publish = push -u
 	pr = !git-pr
 	base = !git-base
+	rename = !git-rename
 [rebase]
 	autoStash = true
 	autoSquash = true
