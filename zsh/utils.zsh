@@ -5,6 +5,15 @@ function input {
   cat $FILE
 }
 
+# usage: edit "console.log(new Date());" .js
+function edit {
+  local VALUE="$1"
+  local FILE=$(gmktemp --suffix=${2:-.txt})
+  echo "$VALUE" > $FILE
+  code --wait $FILE
+  cat $FILE
+}
+
 function whoisusingport {
   PORT="$1"
   lsof -nP -i4TCP:$PORT | grep LISTEN
