@@ -1,10 +1,26 @@
 function run {
   local COMMAND="$1"
   if has-dep dotenv; then
-    if [ ! -z "$DEBUG" ]; then
-      dotenv -e .env${ENV:+.$ENV} -- bash -c 'echo '"$COMMAND"
+    if [ -f ".env${ENV:+.$ENV}" ]; then
+      local DOTENV_FILE=".env${ENV:+.$ENV}"
+    elif [ ! -z "$ENV" ]; then
+      if [[ "$ENV" == staging && -f .env ]]; then
+        local DOTENV_FILE=".env"
+      # service-tms convention
+      elif [[ "$ENV" == test && -f .env.unit ]]; then
+        local DOTENV_FILE=".env.unit"
+      else
+        echo "unknown env '$ENV'" >>/dev/stderr
+        return 1
+      fi
+    else
+      echo "please create .env file"
+      return 1
     fi
-    dotenv -e .env${ENV:+.$ENV} -- bash -c "$COMMAND"
+    if [ ! -z "$DEBUG" ]; then
+      dotenv -e $DOTENV_FILE -- bash -c 'echo '"$COMMAND"
+    fi
+    dotenv -e $DOTENV_FILE -- bash -c "$COMMAND"
   elif has-dep dotenv-flow; then
     NODE_ENV=${NODE_ENV:-$ENV} dotenv-flow -- bash -c "$COMMAND"
   else
