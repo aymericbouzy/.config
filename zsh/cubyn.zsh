@@ -127,3 +127,10 @@ function s3-staging {
 function trx {
   open "https://app.datadoghq.com/logs?cols=service%2C%40custom.errorString.type&from_ts=1606136683000&index=&live=true&messageDisplay=inline&query=%40context.transactionId%3A$1&stream_sort=desc&to_ts=1607346283000"
 }
+
+# usage: ticket TMS-101
+function ticket {
+  local TICKET="https://cubynjira.atlassian.net/browse/$1"
+  echo "$TICKET" | clipboard
+  echo "copied to clipboard 📋 $TICKET"
+}
