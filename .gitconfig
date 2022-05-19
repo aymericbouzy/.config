@@ -37,6 +37,7 @@
 	pr = !git-pr
 	base = !git-base
 	rename = !git-rename
+	graph = log --graph --format=simple --branches --remotes
 [rebase]
 	autoStash = true
 	autoSquash = true

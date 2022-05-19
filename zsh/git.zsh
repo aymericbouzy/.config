@@ -56,7 +56,7 @@ function auto-review-retry {
 # git alias
 alias gri="git rb origin/develop"
 alias grc="git rebase --continue"
-alias gg="git log --graph --oneline --branches"
+alias gg="git graph"
 
 alias m='git sw $(if git-branch-exists master; then echo master; else echo main; fi) && git pull'
 alias d="git sw develop && git pull"
