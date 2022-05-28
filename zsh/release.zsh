@@ -1,14 +1,18 @@
-# usage: release major|minor|patch "release message"
+# usage: release major|minor|patch|1.20.1 "release message"
 function release {
   local BUMP="$1"
   local MESSAGE="$2"
   local PACKAGE_JSON_PATH="$PWD/package.json"
   local CURRENT=$(cat "$PACKAGE_JSON_PATH" | jq '.version' -r)
-  local NEW=$(semver "$CURRENT" -i "$BUMP")
+  if echo major minor patch | grep -w -q $BUMP; then
+    local NEW=$(semver "$CURRENT" -i "$BUMP")
+  else
+    local NEW=$BUMP
+  fi
   git-sync
   git flow init -d
   git flow release start "v$NEW"
-  npm version "$BUMP" -m "release: bump to v$NEW"'
+  npm version "$NEW" -m "release: bump to v$NEW"'
 
 '"$MESSAGE"
   git flow release finish "v$NEW"
