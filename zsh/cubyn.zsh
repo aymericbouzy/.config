@@ -34,7 +34,11 @@ function sql {
   if has-dep pg; then
     run 'PGPASSWORD=$POSTGRESQL_PASSWORD psql -d '"${DATABASE:-'$POSTGRESQL_DATABASE'}"' -U $POSTGRESQL_USER -h $POSTGRESQL_HOST -p $POSTGRESQL_PORT -c "'"$SCRIPT"'"'
   else
-    local USE_DATABASE='USE \`${DB_DATABASE:-$MYSQL_DATABASE}\`'
+    if [[ "$USE_DATABASE" == "false" ]]; then
+      local USE_DATABASE=
+    else
+      local USE_DATABASE='USE \`${DB_DATABASE:-$MYSQL_DATABASE}\`'
+    fi
     run 'MYSQL_PWD=${DB_PASS:-$MYSQL_PASSWORD} mysql -h ${DB_HOST:-$MYSQL_HOST} --port ${DB_PORT:-${MYSQL_PORT:-3306}} -u ${DB_USER:-$MYSQL_USER} -e "'"$USE_DATABASE; $SCRIPT"'"'
   fi
 }
@@ -59,7 +63,7 @@ function testdb {
     ENV=test sql 'DROP SCHEMA public CASCADE; CREATE SCHEMA public;'
   else
     echo "Recreating test database \`$(ENV=test run 'echo "${DB_DATABASE:-$MYSQL_DATABASE}"')\`"
-    ENV=test sql 'DROP DATABASE IF EXISTS \`${DB_DATABASE:-$MYSQL_DATABASE}\`; CREATE DATABASE \`${DB_DATABASE:-$MYSQL_DATABASE}\`;'
+    ENV=test USE_DATABASE=false sql 'DROP DATABASE IF EXISTS \`${DB_DATABASE:-$MYSQL_DATABASE}\`; CREATE DATABASE \`${DB_DATABASE:-$MYSQL_DATABASE}\`;'
   fi
   if make help | grep test-init >>/dev/null; then
     make test-init
@@ -77,7 +81,7 @@ function initdb {
       DATABASE=$DEFAULT_DATABASE sql 'CREATE DATABASE $POSTGRESQL_DATABASE'
     fi
   else
-    sql 'CREATE DATABASE IF NOT EXISTS \`${DB_DATABASE:-$MYSQL_DATABASE}\`;'
+    USE_DATABASE=false sql 'CREATE DATABASE IF NOT EXISTS \`${DB_DATABASE:-$MYSQL_DATABASE}\`;'
   fi
 }
 
