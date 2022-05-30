@@ -1,0 +1,12 @@
+#! /bin/zsh
+
+local branch="$1"
+
+git fetch
+
+if git merge-base --is-ancestor "$branch" $branch@{upstream}; then
+  git branch --force "$branch" $branch@{upstream}
+else
+  echo "$branch cannot be fast-forwarded, aborting" >/dev/stderr
+  return 1
+fi
