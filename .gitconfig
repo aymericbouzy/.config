@@ -29,6 +29,7 @@
 	# common operations
 	start = !git-start
 	staged = diff --cached
+	unstage = reset HEAD --
 	wip = stash push --include-untracked
 	branches = branch -vv
 	fixup = commit --patch --fixup
