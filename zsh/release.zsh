@@ -17,7 +17,7 @@ function release {
 '"$MESSAGE"
   git flow release finish "v$NEW"
 
-  echo "Release *${PWD##*/} v$NEW*\n* $MESSAGE\n" | clipboard
+  echo "Release *$(cat "$PACKAGE_JSON_PATH" | jq '.name' -r) v$NEW*\n* $MESSAGE\n" | clipboard
 
   echo
   echo "Ready to deploy 🕐 Review the diff before pushing your code 🚨"
