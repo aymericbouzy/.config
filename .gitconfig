@@ -19,7 +19,7 @@
 	cmd = code --wait --diff $LOCAL $REMOTE
 [alias]
 	# shortcuts
-	ci = commit --patch
+	ci = commit
 	sw = switch --merge
 	rb = !git-rb
 	l = log --graph --format=simple
@@ -33,8 +33,8 @@
 	wip = stash push --include-untracked
 	resume = stash pop --index
 	branches = branch -vv
-	fixup = commit --patch --fixup
-	amend = commit --patch --amend
+	fixup = commit --fixup
+	amend = commit --amend
 	publish = push -u
 	pr = !git-pr
 	base = !git-base
