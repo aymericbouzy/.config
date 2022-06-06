@@ -21,13 +21,11 @@
 	# shortcuts
 	ci = commit
 	sw = switch --merge
-	rb = !git-rb
 	l = log --graph --format=simple
 	st = status --short
 	d = diff --ignore-space-change
 	br = branch
 	# common operations
-	start = !git-start
 	staged = diff --cached
 	unstage = reset HEAD --
 	wip = stash push --include-untracked
@@ -36,10 +34,6 @@
 	fixup = commit --fixup
 	amend = commit --amend
 	publish = push -u
-	pr = !git-pr
-	base = !git-base
-	rename = !git-rename
-	ff = !git-ff
 	graph = log --graph --format=simple --branches --remotes
 	undo = reset HEAD~
 [rebase]
