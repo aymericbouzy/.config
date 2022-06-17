@@ -21,8 +21,10 @@ function run {
       dotenv -e $DOTENV_FILE -- bash -c 'echo '"$COMMAND"
     fi
     dotenv -e $DOTENV_FILE -- bash -c "$COMMAND"
+    return $?
   elif has-dep dotenv-flow; then
     NODE_ENV=${NODE_ENV:-$ENV} dotenv-flow -- bash -c "$COMMAND"
+    return $?
   else
     echo "You must be using dotenv or dotenv flow in the repo" >>/dev/stderr
     return 1
@@ -32,14 +34,14 @@ function run {
 function sql {
   local SCRIPT="$1"
   if has-dep pg; then
-    run 'PGPASSWORD=$POSTGRESQL_PASSWORD psql -d '"${DATABASE:-'$POSTGRESQL_DATABASE'}"' -U $POSTGRESQL_USER -h $POSTGRESQL_HOST -p $POSTGRESQL_PORT -c "'"$SCRIPT"'"'
+    run "PGPASSWORD=\$POSTGRESQL_PASSWORD psql -d ${DATABASE:-"\$POSTGRESQL_DATABASE"} -U \$POSTGRESQL_USER -h \$POSTGRESQL_HOST -p \$POSTGRESQL_PORT -c \"$SCRIPT\""
   else
     if [[ "$USE_DATABASE" == "false" ]]; then
       local USE_DATABASE=
     else
       local USE_DATABASE='USE \`${DB_DATABASE:-$MYSQL_DATABASE}\`'
     fi
-    run 'MYSQL_PWD=${DB_PASS:-$MYSQL_PASSWORD} mysql -h ${DB_HOST:-$MYSQL_HOST} --port ${DB_PORT:-${MYSQL_PORT:-3306}} -u ${DB_USER:-$MYSQL_USER} -e "'"$USE_DATABASE; $SCRIPT"'"'
+    run "MYSQL_PWD=\${DB_PASS:-\$MYSQL_PASSWORD} mysql -h \${DB_HOST:-\$MYSQL_HOST} --port \${DB_PORT:-\${MYSQL_PORT:-3306}} -u \${DB_USER:-\$MYSQL_USER} -e \"$USE_DATABASE; $SCRIPT\""
   fi
 }
 
@@ -50,15 +52,15 @@ function shmig {
     local MIGRATIONS_DIRECTORY="migrations"
   fi
   if has-dep pg; then
-    ENV=${ENV:-test} run './shmig -t postgresql -l $POSTGRESQL_USER -p $POSTGRESQL_PASSWORD -d $POSTGRESQL_DATABASE -H $POSTGRESQL_HOST -P $POSTGRESQL_PORT -m '"$MIGRATIONS_DIRECTORY"' -s migrations '"$@"
+    ENV=${ENV:-test} run "./shmig -t postgresql -l \$POSTGRESQL_USER -p \$POSTGRESQL_PASSWORD -d \$POSTGRESQL_DATABASE -H \$POSTGRESQL_HOST -P \$POSTGRESQL_PORT -m $MIGRATIONS_DIRECTORY -s migrations $@"
   else
-    ENV=${ENV:-test} run './shmig -t mysql -l ${DB_USER:-$MYSQL_USER} -p ${DB_PASS:-$MYSQL_PASSWORD} -d ${DB_DATABASE:-$MYSQL_DATABASE} -H ${DB_HOST:-${MYSQL_HOST:-localhost}} -P ${DB_PORT:-${MYSQL_PORT:-3306}} -m '"$MIGRATIONS_DIRECTORY"' -s migrations '"$@"
+    ENV=${ENV:-test} run "./shmig -t mysql -l \${DB_USER:-\$MYSQL_USER} -p \${DB_PASS:-\$MYSQL_PASSWORD} -d \${DB_DATABASE:-\$MYSQL_DATABASE} -H \${DB_HOST:-\${MYSQL_HOST:-localhost}} -P \${DB_PORT:-\${MYSQL_PORT:-3306}} -m $MIGRATIONS_DIRECTORY -s migrations $@"
   fi
 }
 
 function testdb {
   if has-dep pg; then
-    echo "Recreating test schema"
+    echo "Recreating schema for test database $(ENV=test run 'echo "$POSTGRESQL_DATABASE"')"
     ENV=test initdb
     ENV=test sql 'DROP SCHEMA public CASCADE; CREATE SCHEMA public;'
   else
@@ -77,7 +79,7 @@ function testdb {
 function initdb {
   if has-dep pg; then
     local DEFAULT_DATABASE=postgres
-    if ! DATABASE=$DEFAULT_DATABASE sql $'SELECT FROM pg_database WHERE datname = \'$POSTGRESQL_DATABASE\'' | grep "1 row" >>/dev/null; then
+    if ! DATABASE=$DEFAULT_DATABASE sql "SELECT FROM pg_database WHERE datname = '\$POSTGRESQL_DATABASE'" | grep "1 row" >>/dev/null; then
       DATABASE=$DEFAULT_DATABASE sql 'CREATE DATABASE $POSTGRESQL_DATABASE'
     fi
   else
