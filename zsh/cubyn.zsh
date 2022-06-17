@@ -96,6 +96,8 @@ function tw {
       yarn test:unit:watch
     elif jq '.scripts | has("test:watch")' package.json -e >>/dev/null; then
       yarn test:watch
+    elif make help | grep test-watch >>/dev/null; then
+      make test-watch
     else
       yarn test --watch
     fi
