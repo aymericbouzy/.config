@@ -46,3 +46,15 @@ function pod {
 
 # https://cloud.google.com/blog/products/containers-kubernetes/kubectl-auth-changes-in-gke
 export USE_GKE_GCLOUD_AUTH_PLUGIN=True
+
+# usage: kapply service-parcel
+function kapply {
+  (
+    cd k8s-configuration
+    local ENV=$(kube-current-context)
+    local SERVICE=$1
+    ./independant_apply.sh $ENV "1-$ENV/$SERVICE.yml"
+    kubectx $ENV
+    kubens $ENV
+  )
+}
