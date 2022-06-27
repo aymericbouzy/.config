@@ -43,10 +43,10 @@
 [push]
 	default = current
 	followTags = true
-[pager]
-	log = diffr | less
-	show = diffr | less
-	diff = diffr | less
+# [pager]
+# 	log = diffr | less
+# 	show = diffr | less
+# 	diff = diffr | less
 [interactive]
   diffFilter = diffr
 [rerere]
