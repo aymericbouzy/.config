@@ -4,6 +4,7 @@ function release {
   local MESSAGE="$2"
   local PACKAGE_JSON_PATH="$PWD/package.json"
   local CURRENT=$(cat "$PACKAGE_JSON_PATH" | jq '.version' -r)
+  local NAME=$(cat "$PACKAGE_JSON_PATH" | jq '.name' -r)
   if echo major minor patch | grep -w -q $BUMP; then
     local NEW=$(semver "$CURRENT" -i "$BUMP")
   else
@@ -17,7 +18,7 @@ function release {
 '"$MESSAGE"
   git flow release finish "v$NEW"
 
-  echo "Release *$(cat "$PACKAGE_JSON_PATH" | jq '.name' -r) v$NEW*\n* $MESSAGE\n" | clipboard
+  echo "Release *$NAME v$NEW*\n* $MESSAGE\n" | clipboard
 
   echo
   echo "Ready to deploy 🕐 Review the diff before pushing your code 🚨"
