@@ -47,13 +47,17 @@ function hotfix {
   MESSAGE="$2"
   PACKAGE_JSON_PATH="$PWD/package.json"
   CURRENT=$(cat "$PACKAGE_JSON_PATH" | jq '.version' -r)
-  NEW=$(semver "$CURRENT" -i "$BUMP")
+  if echo major minor patch | grep -w -q $BUMP; then
+    local NEW=$(semver "$CURRENT" -i "$BUMP")
+  else
+    local NEW=$BUMP
+  fi
   git-sync
   git flow init -d
   git flow hotfix start "v$NEW"
   echo "You can now cherry pick some commits to the hotfix branch. Press Enter when done."
   read confirmation
-  npm version "$BUMP" -m "release: bump to v$NEW"'
+  npm version "$NEW" -m "release: bump to v$NEW"'
 
 '"$MESSAGE"
   git flow hotfix finish "v$NEW"
