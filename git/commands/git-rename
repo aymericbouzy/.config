@@ -2,6 +2,6 @@
 
 . $HOME/.config/zsh/utils.zsh
 
-local oldName="$(git branch --show-current)"
-local newName="$(edit "$oldName")"
+local oldName="$(git branch --show-current | tr '-' ' ')"
+local newName="$(edit "$oldName" | tr ' ' '-')"
 git branch -m "$newName"
