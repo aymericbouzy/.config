@@ -1,6 +1,7 @@
 function git-branch-exists {
   local BRANCH="$1"
-  git rev-parse --verify "refs/heads/$BRANCH" > /dev/null 2> /dev/null
+  git rev-parse --verify "refs/heads/$BRANCH" > /dev/null 2> /dev/null \
+    || git rev-parse --verify "refs/remotes/origin/$BRANCH" > /dev/null 2> /dev/null
   return $?
 }
 
