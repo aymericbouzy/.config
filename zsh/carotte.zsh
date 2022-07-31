@@ -74,7 +74,7 @@ function krot {
   # useful to monitor rollout of deployment
   # usage: krot pods
   function pods {
-    kubectl get pods -l=app=$(cat package.json | jq '.name' -r) --watch
+    kubectl get pods -l=app=$(cat package.json | jq '.name' -r) --watch --sort-by=.status.startTime
   }
 
   "$@"
