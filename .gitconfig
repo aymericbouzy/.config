@@ -83,3 +83,5 @@
 	forceSignAnnotated = true
 [versionsort]
 	suffix = ""
+[fetch]
+	prune = true
