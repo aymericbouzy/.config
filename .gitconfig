@@ -5,7 +5,7 @@
 [commit]
 	gpgsign = true
 [pull]
-	rebase = merges
+	rebase = true
 [core]
 	editor = code --wait
 	hooksPath = /Users/aymeric/.config/git/hooks
@@ -20,7 +20,7 @@
 [alias]
 	# shortcuts
 	ci = commit
-	sw = switch --merge
+	sw = switch
 	l = log --graph --format=simple
 	st = status --short
 	d = diff --ignore-space-change

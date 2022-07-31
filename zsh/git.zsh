@@ -7,15 +7,15 @@ function git-branch-exists {
 # sync master and develop with origin
 function git-sync {
   if git-branch-exists master; then
-    git sw master
+    git switch master
     git pull
   fi
   if git-branch-exists main; then
-    git sw main
+    git switch main
     git pull
   fi
   if git-branch-exists develop; then
-    git sw develop
+    git switch develop
     git pull
   fi
   install-deps
@@ -58,8 +58,8 @@ alias gri="git rb origin/develop"
 alias grc="git rebase --continue"
 alias gg="git graph"
 
-alias m='git sw $(if git-branch-exists master; then echo master; else echo main; fi) && git pull'
-alias d="git sw develop && git pull"
+alias m='git switch $(if git-branch-exists master; then echo master; else echo main; fi) && git pull'
+alias d="git switch develop && git pull"
 
 function blame-ignore {
   local COMMIT="$1"
@@ -102,9 +102,9 @@ function switch {
   # using --track and a remote branch name, it is the same as:
   # git checkout -b branchName --track origin/branchName
   if [[ "$branch" = 'remotes/'* ]]; then
-    git sw --track $branch
+    git switch --track $branch
   else
-    git sw $branch
+    git switch $branch
   fi
 }
 
