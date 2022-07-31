@@ -1,3 +1,4 @@
 #! /bin/zsh
 
-git stash store "$(git stash create "$1" --include-untracked)"
+git stash push --include-untracked
+git stash apply --index
