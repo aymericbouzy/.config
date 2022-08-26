@@ -62,6 +62,7 @@ function krot {
     (
       set -e
       install-deps
+      initdb || echo "initdb failed, ignoring"
       if jq -e '.scripts | has("serve:watch")' package.json >>/dev/null; then
         NODE_ENV=${NODE_ENV:-staging} make init
         NODE_ENV=${NODE_ENV:-staging} yarn serve:watch
