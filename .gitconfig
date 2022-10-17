@@ -28,7 +28,6 @@
 	# common operations
 	staged = diff --cached
 	unstage = reset HEAD --
-	wip = stash push --include-untracked
 	resume = stash pop --index
 	branches = branch -vv
 	fixup = commit --fixup

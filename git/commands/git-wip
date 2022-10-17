@@ -1,0 +1,7 @@
+#! /bin/zsh
+
+if git diff --quiet && git diff --cached --quiet; then
+  exit 1
+else
+  git stash push --include-untracked
+fi

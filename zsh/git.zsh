@@ -59,8 +59,22 @@ alias gri="git rb origin/develop"
 alias grc="git rebase --continue"
 alias gg="git graph"
 
-alias m='git switch $(if git-branch-exists master; then echo master; else echo main; fi) && git pull'
-alias d="git switch develop && git pull"
+function git-switch-pull {
+  local branch="$1"
+
+  git wip
+  local didstash="$?"
+
+  git switch "$branch"
+  git pull
+
+  if [ "$didstash" -eq 0 ]; then
+    git resume
+  fi
+}
+
+alias m='git-switch-pull $(if git-branch-exists master; then echo master; else echo main; fi)'
+alias d='git-switch-pull develop'
 
 function blame-ignore {
   local COMMIT="$1"
