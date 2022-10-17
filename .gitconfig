@@ -25,6 +25,7 @@
 	st = status --short
 	d = diff --ignore-space-change
 	br = branch
+	cp = cherry-pick
 	# common operations
 	staged = diff --cached
 	unstage = reset HEAD --
