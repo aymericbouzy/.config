@@ -12,7 +12,7 @@ symbol = " "
 
 [kubernetes]
 disabled = false
-format = '[$symbol $context]($style) in '
+format = '[$symbol $namespace]($style) in '
 symbol = "⎈ "
 style = "33 bold"
 

@@ -15,7 +15,7 @@ function kube-qa {
 alias kq="kube-qa"
 
 function kube-demo {
-  kubectx sandbox
+  kubectx production
   kubens sandbox
 }
 alias kd="kube-demo"
@@ -27,7 +27,7 @@ function kube-production {
 alias kp="kube-production"
 
 function kube-current-context {
-  kubectl config view -o jsonpath='{.current-context}'
+  kubens -c
 }
 
 alias kn=kubens
@@ -54,7 +54,11 @@ function kapply {
     local ENV=$(kube-current-context)
     local SERVICE=$1
     ./independant_apply.sh $ENV "1-$ENV/$SERVICE.yml"
-    kubectx $ENV
+    if [ $ENV = sandbox ]; then
+      kubectx production
+    else
+      kubectx $ENV
+    fi
     kubens $ENV
   )
 }
