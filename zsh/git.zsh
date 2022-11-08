@@ -55,7 +55,7 @@ function auto-review-retry {
 }
 
 # git alias
-alias gri="git rb origin/develop"
+alias gri="git rb develop@{u}"
 alias grc="git rebase --continue"
 alias gg="git graph"
 
@@ -89,7 +89,7 @@ function blame-ignore {
 
 function pending-release {
   git fetch
-  git l origin/master..origin/develop "$@"
+  git l master@{u}..develop@{u} "$@"
 }
 
 # from https://polothy.github.io/post/2019-08-19-fzf-git-checkout/

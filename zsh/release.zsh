@@ -23,8 +23,8 @@ function release {
   echo
   echo "Ready to deploy 🕐 Review the diff before pushing your code 🚨"
   echo
-  echo "  git diff origin/master..master"
-  echo "  git log origin/master...master --oneline"
+  echo "  git diff master@{u}..master"
+  echo "  git log master@{u}...master --oneline"
   echo
   echo "Once you've confirmed all the code was correctly reviewed, run:"
   echo
@@ -36,9 +36,9 @@ function cancel-release {
   local VERSION=$(cat "$PACKAGE_JSON_PATH" | jq '.version' -r)
   git tag --delete "v$VERSION"
   git switch master
-  git reset --hard origin/master
+  git reset --hard master@{u}
   git switch develop
-  git reset --hard origin/develop
+  git reset --hard develop@{u}
 }
 
 # usage: hotfix major|minor|patch "release message"
