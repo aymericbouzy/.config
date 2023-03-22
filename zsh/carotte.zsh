@@ -7,7 +7,7 @@ function krot {
   # usage: krot migration add-deliveries
   function migration {
     local name="$(echo "$@" | tr ' ' '-')"
-    local version="$(date +%s)"
+    local version="${VERSION:-$(date +%s)}"
     filename="$version-$name.sql"
     migrationPath='migrations'
 
