@@ -17,7 +17,7 @@ function krot {
     fi
 
     touch $migrationPath/$filename;
-    echo "-- Migration: $name\n-- Version: $version\n-- Created at: `date '+%F %H:%M:%S'`\n\n-- ====  UP  ====\n\n-- ==== DOWN ====" > $migrationPath/$filename;
+    echo "-- Migration: $name\n-- Version: $version\n-- Created at: $(date '+%F %H:%M:%S')\n\n-- ====  UP  ====\n\n-- ==== DOWN ====" > $migrationPath/$filename;
 
     if [ -d "migrations/test" ]
     then
