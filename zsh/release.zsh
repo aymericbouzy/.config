@@ -23,8 +23,8 @@ function release {
   echo
   echo "Ready to deploy 🕐 Review the diff before pushing your code 🚨"
   echo
-  echo "  git diff master@{u}..master"
-  echo "  git log master@{u}...master --oneline"
+  echo "  git diff $(git-main-branch)@{u}..$(git-main-branch)"
+  echo "  git log $(git-main-branch)@{u}...$(git-main-branch) --oneline"
   echo
   echo "Once you've confirmed all the code was correctly reviewed, run:"
   echo
@@ -35,10 +35,12 @@ function cancel-release {
   local PACKAGE_JSON_PATH="$PWD/package.json"
   local VERSION=$(cat "$PACKAGE_JSON_PATH" | jq '.version' -r)
   git tag --delete "v$VERSION"
-  git switch master
-  git reset --hard master@{u}
+  git switch "$(git-main-branch)"
+  git reset --hard "$(git-main-branch)@{u}"
   git switch develop
   git reset --hard develop@{u}
+  # sometimes we accidentally delete the tag of the latest version: fetch it again
+  git pull
 }
 
 # usage: hotfix major|minor|patch "release message"
@@ -87,7 +89,7 @@ function restore {
 function deploy {
   git switch develop
   git push
-  git switch master
+  git switch "$(git-main-branch)"
   git push
   open "https://app.circleci.com/pipelines/github/cubyn?filter=mine" &
   local SERVICE="${PWD##*/}"

@@ -5,6 +5,15 @@ function git-branch-exists {
   return $?
 }
 
+function git-main-branch {
+  if git-branch-exists master; then
+    echo master
+  fi
+  if git-branch-exists main; then
+    echo main
+  fi
+}
+
 # sync master and develop with origin
 function git-sync {
   if git-branch-exists master; then
@@ -73,7 +82,7 @@ function git-switch-pull {
   fi
 }
 
-alias m='git-switch-pull $(if git-branch-exists master; then echo master; else echo main; fi)'
+alias m='git-switch-pull $(git-main-branch)'
 alias d='git-switch-pull develop'
 
 function blame-ignore {
@@ -89,7 +98,7 @@ function blame-ignore {
 
 function pending-release {
   git fetch
-  git l master@{u}..develop@{u} "$@"
+  git l "$(git-main-branch)@{u}..develop@{u}" "$@"
 }
 
 # from https://polothy.github.io/post/2019-08-19-fzf-git-checkout/
