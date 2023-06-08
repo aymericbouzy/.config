@@ -78,5 +78,19 @@ function krot {
     kubectl get pods -l=app=$(cat package.json | jq '.name' -r) --watch --sort-by=.status.startTime
   }
 
+  function file {
+    (
+      set -e
+      local key="$1"
+      local download_path="$HOME/Downloads$key"
+
+      CAROTTE_HOST="rabbitmq-amqp.$(kube-current-context).playship.co" carotte invoke file.read:v1 -t '{
+        key: "$0"
+      }' --bulk -p "$key" --json | jq '.url' -r | xargs curl --output "$download_path"
+
+      open "$download_path"
+    )
+  }
+
   "$@"
 }
