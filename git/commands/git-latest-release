@@ -1,0 +1,10 @@
+#! /bin/zsh
+
+local tag_range=$(
+  git tag -l --sort=version:refname | \
+    grep -E '^v[0-9]+.[0-9]+.[0-9]+$' | \
+    tail -n 2 | \
+    awk -v d=".." '{s=(NR==1?s:s d)$0}END{print s}'
+)
+
+git log --patch --format=medium --reverse "$tag_range"
