@@ -1,6 +1,7 @@
 source <(kubectl completion zsh)
 
 alias k="kubectl"
+compdef k=kubectl
 
 function kube-staging {
   kubectx staging
@@ -32,6 +33,7 @@ function kube-current-context {
 
 alias kn=kubens
 alias kx=kubectx
+compdef kn=kubens kx=kubectx
 
 function get-pod {
   SERVICE="$1"
