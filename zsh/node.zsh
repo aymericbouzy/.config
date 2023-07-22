@@ -22,4 +22,3 @@ function has-dep {
 }
 
 alias n=nodenv
-compdef n=nodenv
