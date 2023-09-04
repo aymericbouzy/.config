@@ -3,6 +3,11 @@ function release {
   local BUMP="$1"
   local MESSAGE="$2"
   local PACKAGE_JSON_PATH="$PWD/package.json"
+
+  git wip
+  local didstash="$?"
+  git-sync
+
   local CURRENT=$(cat "$PACKAGE_JSON_PATH" | jq '.version' -r)
   local NAME=$(cat "$PACKAGE_JSON_PATH" | jq '.name' -r)
   if echo major minor patch | grep -w -q $BUMP; then
@@ -10,13 +15,16 @@ function release {
   else
     local NEW=$BUMP
   fi
-  git-sync
   git flow init -d
   git start "release/v$NEW"
   npm version "$NEW" -m "release: bump to v$NEW"'
 
 '"$MESSAGE"
   git flow release finish "v$NEW"
+
+  if [ "$didstash" -eq 0 ]; then
+    git resume
+  fi
 
   echo "Release *$NAME v$NEW*\n* $MESSAGE\n" | clipboard
 
@@ -48,13 +56,17 @@ function hotfix {
   BUMP="$1"
   MESSAGE="$2"
   PACKAGE_JSON_PATH="$PWD/package.json"
+
+  git wip
+  local didstash="$?"
+  git-sync
+
   CURRENT=$(cat "$PACKAGE_JSON_PATH" | jq '.version' -r)
   if echo major minor patch | grep -w -q $BUMP; then
     local NEW=$(semver "$CURRENT" -i "$BUMP")
   else
     local NEW=$BUMP
   fi
-  git-sync
   git flow init -d
   m
   git start "hotfix/v$NEW"
@@ -64,6 +76,11 @@ function hotfix {
 
 '"$MESSAGE"
   git flow hotfix finish "v$NEW"
+
+  if [ "$didstash" -eq 0 ]; then
+    git resume
+  fi
+
   echo "Release *${PWD##*/} v$NEW*\n* $MESSAGE\n" | clipboard
 }
 
@@ -71,9 +88,13 @@ function hotfix {
 function restore {
   local TAG="$1"
   local PACKAGE_JSON_PATH="$PWD/package.json"
+
+  git wip
+  local didstash="$?"
+  git-sync
+
   local CURRENT=$(cat "$PACKAGE_JSON_PATH" | jq '.version' -r)
   local NEW=$(semver "$CURRENT" -i patch)
-  git-sync
   git flow init -d
   git flow hotfix start "v$NEW"
   local BRANCH=$(git rev-parse --abbrev-ref HEAD)
@@ -83,6 +104,11 @@ function restore {
   git commit -am "revert: restore $TAG"
   npm version "$NEW" -m "release: restore $TAG"
   git flow hotfix finish "v$NEW"
+
+  if [ "$didstash" -eq 0 ]; then
+    git resume
+  fi
+
   echo "Release *${PWD##*/} v$NEW*\n* revert $TAG\n" | clipboard
 }
 
