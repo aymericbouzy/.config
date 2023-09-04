@@ -3,30 +3,6 @@ source <(kubectl completion zsh)
 alias k="kubectl"
 compdef k=kubectl
 
-function kube-staging {
-  kubectx staging
-  kubens staging
-}
-alias ks="kube-staging"
-
-function kube-qa {
-  kubectx qa
-  kubens qa
-}
-alias kq="kube-qa"
-
-function kube-demo {
-  kubectx production
-  kubens sandbox
-}
-alias kd="kube-demo"
-
-function kube-production {
-  kubectx production
-  kubens production
-}
-alias kp="kube-production"
-
 function kube-current-context {
   kubens -c
 }
@@ -56,11 +32,6 @@ function kapply {
     local ENV=$(kube-current-context)
     local SERVICE=$1
     ./independant_apply.sh $ENV "1-$ENV/$SERVICE.yml"
-    if [ $ENV = sandbox ]; then
-      kubectx production
-    else
-      kubectx $ENV
-    fi
-    kubens $ENV
+    "$ENV"
   )
 }

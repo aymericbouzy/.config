@@ -1,5 +1,4 @@
 export CAROTTE_HOST=rabbitmq-amqp.staging.playship.co
-export AMQP_HOST="$CAROTTE_HOST"
 export CAROTTE_CLI_USER=aymeric_bouzy
 export CAROTTE_DEBUG_TOKEN=aymericb
 
