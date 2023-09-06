@@ -83,7 +83,13 @@ function git-switch-pull {
 }
 
 alias m='git-switch-pull $(git-main-branch)'
-alias d='git-switch-pull develop'
+
+function d {
+  git-switch-pull develop
+  echo ""
+  echo "Unreleased changes:"
+  git --no-pager d $(git-main-branch)..develop --stat
+}
 
 function blame-ignore {
   local COMMIT="$1"
