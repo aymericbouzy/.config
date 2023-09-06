@@ -91,5 +91,15 @@ function krot {
     )
   }
 
+  function debug {
+    if [ "$1" = off ]; then
+      export CAROTTE_DEBUG_TOKEN=
+      echo "carotte debug token off"
+    else
+      export CAROTTE_DEBUG_TOKEN=aymericb
+      echo "carotte debug token: aymericb"
+    fi
+  }
+
   "$@"
 }
