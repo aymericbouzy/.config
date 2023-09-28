@@ -4,7 +4,7 @@ alias k="kubectl"
 compdef k=kubectl
 
 function kube-current-context {
-  kubens -c
+  kubectl config view -o jsonpath='{.current-context}'
 }
 
 alias kn=kubens
