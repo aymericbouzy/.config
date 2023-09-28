@@ -3,7 +3,7 @@
     "@prettier/plugin-ruby": "^2.0.0",
     "@types/node": "^17.0.18",
     "@vue/cli": "^4.5.13",
-    "carotte-cli": "^2.2.0",
+    "carotte-cli": "^2.3.1",
     "carotte-rest-mapper": "^0.0.1",
     "dotenv": "^10.0.0",
     "dotenv-cli": "^4.0.0",
@@ -11,12 +11,14 @@
     "dts-gen": "^0.6.0",
     "fast-cli": "^3.2.0",
     "nodemon": "^2.0.12",
+    "nw": "0.15.4-sdk",
     "prettier": "^2.5.1",
     "react-native-cli": "^2.0.1",
+    "react-native-git-upgrade": "^0.2.7",
     "retree-cli": "^0.3.1",
     "semver": "^7.3.5",
     "ts-node": "^10.5.0",
     "typescript": "^4.5.5",
-    "zx": "^5.0.0"
+    "zx": "^7.1.1"
   }
 }
