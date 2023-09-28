@@ -72,6 +72,11 @@ EOF
       set -e
       install-deps
       initdb || echo "initdb failed, ignoring"
+
+      if [[ "$CAROTTE_DEBUG_TOKEN" != "" ]]; then
+        echo 'running with debug token "'"$CAROTTE_DEBUG_TOKEN"'"'
+      fi
+
       if jq -e '.scripts | has("serve:watch")' package.json >>/dev/null; then
         NODE_ENV=${NODE_ENV:-staging} make init
         NODE_ENV=${NODE_ENV:-staging} yarn serve:watch
