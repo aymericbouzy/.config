@@ -4,8 +4,10 @@ local branch="$1"
 
 git fetch
 
-if git merge-base --is-ancestor "$branch" $branch@{upstream}; then
-  git branch --force "$branch" $branch@{upstream}
+if [[ $(git branch --show-current) == "$branch" ]]; then
+  git pull
+elif git merge-base --is-ancestor "$branch" "$branch"@{upstream}; then
+  git branch --force "$branch" "$branch"@{upstream}
 else
   echo "$branch cannot be fast-forwarded, aborting" >/dev/stderr
   return 1

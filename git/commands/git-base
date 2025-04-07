@@ -1,9 +1,11 @@
 #! /bin/zsh
 
 local branch="$(git branch --show-current)"
+local current_base="$(git config --get "branch.$branch.base")"
 
 if [ -z "$1" ]; then
-  git config --get "branch.$branch.base"
+  echo "$current_base"
 else
   git config "branch.$branch.base" "$1"
+  echo "Updated base from $current_base to $1"
 fi

@@ -1,0 +1,16 @@
+#! /bin/zsh
+
+local branch="$(git branch --show-current)"
+
+branch_name=$(git config --list | grep -Eo "^branch\..*?\.base=($branch\$)" | sed -n 's/branch.\(.*\).base=.*/\1/p')
+
+local childs=$(echo "$branch_name" | wc -l)
+
+if [ "$childs" -eq 0 ]; then
+  echo "No child branch found"
+  exit 1
+elif [ "$childs" -eq 1 ]; then
+  git switch "$branch_name"
+else
+  echo $branch_name | fzf | xargs git switch
+fi

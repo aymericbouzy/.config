@@ -1,6 +1,16 @@
 #! /bin/zsh
 
 local branch="$(echo "$@" | tr ' ' '-')"
+
+if [ -z "$branch" ]; then
+  vared -p "Branch name: " branch
+  branch="$(echo "$branch" | tr ' ' '-')"
+fi
+
+if [ -n "$GIT_BRANCH_PREFIX" ]; then
+  branch="$GIT_BRANCH_PREFIX/$branch"
+fi
+
 local base="$(git branch --show-current)"
 git switch --create "$branch"
 git config "branch.$branch.base" "$base"

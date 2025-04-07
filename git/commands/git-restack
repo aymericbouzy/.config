@@ -1,0 +1,19 @@
+#! /bin/zsh
+
+git ff $(git base)
+git merge $(git base)
+
+if [ $? -ne 0 ]; then
+  return $?
+fi
+
+local new_base="$1"
+
+if [ ! -z "$new_base" ]; then
+  git ff "$new_base"
+  git rb --onto "$new_base"
+
+  if [ $? -eq 0 ]; then
+    git base "$new_base"
+  fi
+fi

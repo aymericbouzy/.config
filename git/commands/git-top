@@ -1,0 +1,12 @@
+#! /bin/zsh
+
+local current="$(git branch --show-current)"
+
+while git up;
+do
+  local new="$(git branch --show-current)"
+  if [[ "$current" == "$new" ]]; then
+    echo "Aborted"
+    break
+  fi
+done
