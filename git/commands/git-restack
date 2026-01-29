@@ -1,19 +1,22 @@
 #! /bin/zsh
 
-git ff $(git base)
-git merge $(git base)
+base=$(git base)
+
+git ff "$base"
+if [ "$base" = master ]; then
+	git merge master
+else
+	git rb
+fi
 
 if [ $? -ne 0 ]; then
-  return $?
+	return $?
 fi
 
 local new_base="$1"
 
 if [ ! -z "$new_base" ]; then
-  git ff "$new_base"
-  git rb --onto "$new_base"
-
-  if [ $? -eq 0 ]; then
-    git base "$new_base"
-  fi
+	git ff "$new_base"
+	git base "$new_base"
+	git rb
 fi

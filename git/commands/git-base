@@ -4,8 +4,22 @@ local branch="$(git branch --show-current)"
 local current_base="$(git config --get "branch.$branch.base")"
 
 if [ -z "$1" ]; then
-  echo "$current_base"
+	echo "$current_base"
+elif [ "$1" = "--sha" ]; then
+	echo "$(git config --get "branch.$branch.base-sha")"
 else
-  git config "branch.$branch.base" "$1"
-  echo "Updated base from $current_base to $1"
+	git config "branch.$branch.base" "$1"
+	if [ "$current_base" != "$1" ]; then
+		echo "Updated base from $current_base to $1"
+	fi
+
+	if [ "$2" = "--sha" ]; then
+		local current_base_sha="$(git config --get "branch.$branch.base-sha")"
+		local new_base_sha="$(git rev-parse "$1")"
+		git config "branch.$branch.base-sha" "$new_base_sha"
+
+		if [ "$current_base_sha" != "$new_base_sha" ]; then
+			echo "Updated base sha from $current_base_sha to $new_base_sha"
+		fi
+	fi
 fi

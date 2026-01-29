@@ -1,3 +1,24 @@
 #! /bin/zsh
 
-git rebase --interactive $(git base) "$@"
+local base_sha="$(git base --sha)"
+
+if [ -z "$base_sha" ]; then
+	echo "No base sha found, using $(git base) instead"
+	base_sha="$(git rev-parse $(git base))"
+fi
+
+# Check if base branch has moved forward since we started
+if [ "$(git rev-parse $(git base))" = "$base_sha" ] && [ -z "$(git log "..$(git base)")" ]; then
+	echo "Already up to date"
+else
+	git rebase --interactive "$base_sha" --onto "$(git base)" "$@"
+
+	GIT_DIR="$(git rev-parse --git-dir)"
+
+	# if there is no rebase in progress
+	if [ -d "$GIT_DIR/rebase-merge" ]; then
+		echo 'Fix the rebase conflicts and run: git base "$(git base)" --sha'
+	else
+		git base "$(git base)" --sha
+	fi
+fi

@@ -1,0 +1,6 @@
+#! /bin/zsh
+
+local branch="$1"
+
+git ff "$branch"
+git switch "$branch"
