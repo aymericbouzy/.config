@@ -1,0 +1,29 @@
+#!/usr/bin/env sh
+
+set -e
+
+PATTERN="$1"
+REPO_PATH="$(git rev-parse --show-toplevel)"
+PROJECT_BUILD_DIR="$REPO_PATH/apps/obj/.project_build"
+
+if [ ! -d "$PROJECT_BUILD_DIR" ]; then
+	mkdir -p "$PROJECT_BUILD_DIR"
+fi
+
+if [ -z "$PATTERN" ]; then
+	echo "No pattern provided"
+	return 1
+elif [ -f "$PROJECT_BUILD_DIR/$PATTERN" ]; then
+	PROJECT=$(cat "$PROJECT_BUILD_DIR/$PATTERN")
+else
+	# find csproj matching pattern
+	PROJECTS="$(find "$REPO_PATH/apps/" -maxdepth 3 -name "*.csproj" | grep -i "/apps/.*$PATTERN")"
+
+	# if several projects, ask which one
+	PROJECT=$(echo "$PROJECTS" | fzf)
+
+	# remember project
+	echo "$PROJECT" >"$PROJECT_BUILD_DIR/$PATTERN"
+fi
+
+echo "$PROJECT"

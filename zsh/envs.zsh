@@ -15,6 +15,8 @@ function sandbox {
 }
 
 function precmd {
+  return
+
   local env="$(kubectl config view -o jsonpath='{.current-context}')"
   local vhost="$(kubens -c)"
   local user="$vhost"

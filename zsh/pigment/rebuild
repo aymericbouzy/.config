@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+
+set -e
+
+SOLUTION_PATH="$(git rev-parse --show-toplevel)/apps/all.sln"
+
+dotnet clean "$SOLUTION_PATH"
+dotnet build "$SOLUTION_PATH"

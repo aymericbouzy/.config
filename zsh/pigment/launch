@@ -1,0 +1,107 @@
+#!/usr/bin/env sh
+
+set -e
+
+# Parse command line arguments
+ENABLE_NPM=true
+ENABLE_FRONT_BUILD=true
+ENABLE_FRONT_GENERATE=true
+ENABLE_DOTNET_BUILD=true
+ENABLE_TONER=true
+ENABLE_CYPRESS=true
+
+while [ $# -gt 0 ]; do
+	case "$1" in
+	--no-npm)
+		ENABLE_NPM=false
+		;;
+	--no-front-build)
+		ENABLE_FRONT_BUILD=false
+		;;
+	--no-dotnet-build)
+		ENABLE_DOTNET_BUILD=false
+		;;
+	--no-toner)
+		ENABLE_TONER=false
+		;;
+	--no-cypress)
+		ENABLE_CYPRESS=false
+		;;
+	*)
+		echo "Unknown option: $1"
+		echo "Usage: $0 [--no-npm] [--no-front-build] [--no-dotnet-build] [--no-toner] [--no-cypress]"
+		exit 1
+		;;
+	esac
+	shift
+done
+
+REPO_PATH="$(git rev-parse --show-toplevel)"
+
+# First, run npm install if needed (front-end build depends on this)
+if [ "$ENABLE_NPM" = true ]; then
+	(
+		cd "$REPO_PATH/apps/Front"
+		npm install
+	) &
+	NPM_PID=$!
+fi
+
+if [ "$ENABLE_FRONT_GENERATE" = true ]; then
+	(
+		cd "$REPO_PATH/apps/Front"
+		npm run generate
+	) &
+	FONT_GENERATE_PID=$!
+fi
+
+if [ "$ENABLE_TONER" = true ]; then
+	(
+		toner self-update
+		toner stack generate \
+			--mode registry \
+			--modePerServiceType.csharp docker-prebuilt-nopublish \
+			--flavors default,local-storage
+	) &
+	TONER_PID=$!
+fi
+
+if [ "$ENABLE_DOTNET_BUILD" = true ]; then
+	(
+		build all
+	) &
+	DOTNET_BUILD_PID=$!
+fi
+
+(
+	# Wait for npm install and front-end generate to complete
+	if [ "$ENABLE_NPM" = true ] || [ "$ENABLE_FRONT_GENERATE" = true ]; then
+		wait "$NPM_PID" "$FONT_GENERATE_PID"
+	fi
+
+	# Now start front-end build (depends on npm install)
+	if [ "$ENABLE_FRONT_BUILD" = true ]; then
+		(
+			cd "$REPO_PATH/apps/Front/packages/app-pigment"
+			npm run build:nospreadjs
+			npm run serve
+		) &
+	fi
+) &
+
+(
+	if [ "$ENABLE_TONER" = true ] || [ "$ENABLE_DOTNET_BUILD" = true ]; then
+		wait "$TONER_PID" "$DOTNET_BUILD_PID"
+	fi
+
+	(
+		stack up -d --build --remove-orphans
+	) &
+) &
+
+wait
+
+if [ "$ENABLE_CYPRESS" = true ]; then
+	cd "$REPO_PATH/apps/Front/packages/app-pigment-e2e"
+	npm run cypress:open:build
+fi

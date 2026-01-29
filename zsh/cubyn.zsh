@@ -104,13 +104,13 @@ function tw {
   )
 }
 
-# available: rabbitmq sftp mongodb elasticsearch product-elasticsearch mysql postgres
-function devenv {
-  (
-    cd $HOME/Dev/cubyn/infra-docker-compose
-    docker-compose -f datasources.yml up "$@"
-  )
-}
+# # available: rabbitmq sftp mongodb elasticsearch product-elasticsearch mysql postgres
+# function devenv {
+#   (
+#     cd $HOME/Dev/cubyn/infra-docker-compose
+#     docker-compose -f datasources.yml up "$@"
+#   )
+# }
 
 # helm
 export CUBYN_HELM_PATH="$HOME/Dev/cubyn/helm"

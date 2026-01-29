@@ -1,0 +1,78 @@
+#!/usr/bin/env sh
+
+set -e
+
+REPO_PATH="$(git rev-parse --show-toplevel)"
+CSPROJ_FILES="$(find "$REPO_PATH/apps/" -maxdepth 3 -name obj -prune -o -name "*.csproj" -print | sort)"
+# shellcheck disable=SC2086
+NEW_CHECKSUM="$(cat "$REPO_PATH/apps/Directory.Packages.props" $CSPROJ_FILES | md5sum | awk '{print $1}')"
+
+OPTIONS="/p:DisableNSwagBuildTargets=false"
+
+CHECKSUM_FILE="$REPO_PATH/apps/obj/.packages-checksum"
+
+# Ensure directory exists
+mkdir -p "$(dirname "$CHECKSUM_FILE")"
+
+if [ -f "$CHECKSUM_FILE" ]; then
+	PACKAGES_CHECKSUM=$(cat "$CHECKSUM_FILE")
+fi
+
+if [ "$NEW_CHECKSUM" = "$PACKAGES_CHECKSUM" ]; then
+	OPTIONS="$OPTIONS /p:Restore=false"
+else
+	echo "$NEW_CHECKSUM" >"$CHECKSUM_FILE"
+fi
+
+BUILD_SLNS_DIR="$REPO_PATH/apps/obj/.build_slns"
+PATTERN="$1"
+LAST_USED_SLN_FILE="$BUILD_SLNS_DIR/last_used.sln"
+LAST_USED_SLN_FILE_NAME="$BUILD_SLNS_DIR/last_used.sln.name"
+
+mkdir -p "$BUILD_SLNS_DIR"
+
+build_sln() {
+	echo "Building $(cat "$LAST_USED_SLN_FILE_NAME") (options: $OPTIONS)"
+	START_TIME=$(date +%s)
+	MAX_CPUS="${BUILD_MAX_CPUS:-$(($(sysctl -n hw.logicalcpu) - 2))}"
+
+	dotnet msbuild /t:Build "/m:$MAX_CPUS" /graphBuild /nr:true "$1" "$OPTIONS"
+	END_TIME=$(date +%s)
+	ELAPSED=$((END_TIME - START_TIME))
+	echo ""
+	echo "Built in ${ELAPSED}s"
+}
+
+if [ -z "$PATTERN" ]; then
+	build_sln "$LAST_USED_SLN_FILE"
+elif [ "$PATTERN" = "all" ]; then
+	cat "$REPO_PATH/apps/all.sln" >"$LAST_USED_SLN_FILE"
+	echo "all.sln" >"$LAST_USED_SLN_FILE_NAME"
+
+	build_sln "$REPO_PATH/apps/all.sln"
+else
+	SLN_PATH="$BUILD_SLNS_DIR/${PATTERN}.sln"
+
+	if [ -f "$SLN_PATH" ]; then
+		echo "Reusing cached solution: $SLN_PATH"
+	else
+		PROJECTS=$(find "$REPO_PATH/apps/" -maxdepth 3 -name "*.csproj" | grep -i "/apps/.*$PATTERN")
+
+		if [ -z "$PROJECTS" ]; then
+			echo "No matching projects for pattern: $PATTERN"
+			return 1
+		fi
+
+		echo "Generating new solution for pattern: $PATTERN"
+		dotnet new sln -n "$PATTERN" -o "$BUILD_SLNS_DIR"
+
+		for proj in $PROJECTS; do
+			dotnet sln "$SLN_PATH" add "$proj"
+		done
+	fi
+
+	cat "$SLN_PATH" >"$LAST_USED_SLN_FILE"
+	echo "$PATTERN.sln" >"$LAST_USED_SLN_FILE_NAME"
+
+	build_sln "$SLN_PATH" "$OPTIONS"
+fi

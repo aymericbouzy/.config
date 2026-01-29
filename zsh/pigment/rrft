@@ -1,0 +1,37 @@
+#!/usr/bin/env sh
+
+set -e
+
+# The goal is to rerun the failed tests on the corresponding circle ci workflow. Assume gh is
+# available, as well as the circle ci cli.
+
+# 1. Get the current branch name
+BRANCH=$(git branch --show-current)
+
+# 2. Get repository info
+REPO_URL=$(git remote get-url origin)
+GITHUB_ORG=$(echo "$REPO_URL" | sed -n 's/.*github\.com[:/]\([^/]*\)\/\([^/]*\)\.git/\1/p')
+GITHUB_REPO=$(echo "$REPO_URL" | sed -n 's/.*github\.com[:/]\([^/]*\)\/\([^/]*\)\.git/\2/p')
+
+# 3. Get the last failed workflow for this branch using API
+WORKFLOW=$(curl -s "https://circleci.com/api/v2/project/github/$GITHUB_ORG/$GITHUB_REPO/pipeline" \
+	-H "Circle-Token: $CIRCLECI_TOKEN" |
+	jq -r --arg branch "$BRANCH" '.items[] | select(.vcs.branch == $branch) | .id' | head -1)
+
+WORKFLOW_ID=$(curl -s "https://circleci.com/api/v2/pipeline/$WORKFLOW/workflow" \
+	-H "Circle-Token: $CIRCLECI_TOKEN" |
+	jq -r '.items[] | select(.status == "failed") | .id' | head -1)
+
+# 4. Cancel the workflow
+curl -X POST "https://circleci.com/api/v2/workflow/$WORKFLOW_ID/cancel" \
+	-H "Circle-Token: $CIRCLECI_TOKEN"
+
+# 5. Rerun failed jobs for the workflow
+FAILED_JOBS=$(curl -s "https://circleci.com/api/v2/workflow/$WORKFLOW_ID/job" \
+	-H "Circle-Token: $CIRCLECI_TOKEN" |
+	jq -r '.items[] | select(.status == "failed") | .job_number')
+
+for JOB_NUMBER in $FAILED_JOBS; do
+	curl -X POST "https://circleci.com/api/v2/project/github/$GITHUB_ORG/$GITHUB_REPO/job/$JOB_NUMBER/rerun" \
+		-H "Circle-Token: $CIRCLECI_TOKEN"
+done

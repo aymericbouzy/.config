@@ -1,0 +1,13 @@
+#!/usr/bin/env sh
+
+set -e
+
+PROJECT="$1"
+TEST_FILTER="$2"
+
+project-build "$PROJECT"
+
+REPO_PATH="$(git rev-parse --show-toplevel)"
+PROJECT_PATH="$(cat "$REPO_PATH/apps/obj/.project_build/$PROJECT")"
+
+dotnet test "$PROJECT_PATH" --no-build --filter "$TEST_FILTER"

@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+
+set -e
+
+REPO_PATH="$(git rev-parse --show-toplevel)"
+
+"$REPO_PATH/apps/login.sh" "$@"

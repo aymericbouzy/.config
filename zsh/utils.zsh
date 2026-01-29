@@ -5,10 +5,10 @@ function input {
   cat $FILE
 }
 
-# usage: edit "console.log(new Date());" .js
+# usage: edit "console.log(new Date());"
 function edit {
   local VALUE="$1"
-  local FILE=$(gmktemp --suffix=${2:-.txt})
+  local FILE=$(mktemp)
   echo "$VALUE" > $FILE
   code --wait $FILE
   cat $FILE

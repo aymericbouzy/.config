@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+
+set -e
+
+REPO_PATH="$(git rev-parse --show-toplevel)"
+
+docker compose \
+	-f "$REPO_PATH/apps/docker-compose.generated.yml" \
+	"$@"
