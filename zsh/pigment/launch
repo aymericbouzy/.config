@@ -8,7 +8,6 @@ ENABLE_FRONT_BUILD=true
 ENABLE_FRONT_GENERATE=true
 ENABLE_DOTNET_BUILD=true
 ENABLE_TONER=true
-ENABLE_CYPRESS=true
 
 while [ $# -gt 0 ]; do
 	case "$1" in
@@ -24,12 +23,9 @@ while [ $# -gt 0 ]; do
 	--no-toner)
 		ENABLE_TONER=false
 		;;
-	--no-cypress)
-		ENABLE_CYPRESS=false
-		;;
 	*)
 		echo "Unknown option: $1"
-		echo "Usage: $0 [--no-npm] [--no-front-build] [--no-dotnet-build] [--no-toner] [--no-cypress]"
+		echo "Usage: $0 [--no-npm] [--no-front-build] [--no-dotnet-build] [--no-toner]"
 		exit 1
 		;;
 	esac
@@ -38,70 +34,52 @@ done
 
 REPO_PATH="$(git rev-parse --show-toplevel)"
 
-# First, run npm install if needed (front-end build depends on this)
-if [ "$ENABLE_NPM" = true ]; then
-	(
-		cd "$REPO_PATH/apps/Front"
-		npm install
-	) &
-	NPM_PID=$!
-fi
-
-if [ "$ENABLE_FRONT_GENERATE" = true ]; then
-	(
-		cd "$REPO_PATH/apps/Front"
-		npm run generate
-	) &
-	FONT_GENERATE_PID=$!
-fi
-
-if [ "$ENABLE_TONER" = true ]; then
-	(
-		toner self-update
-		toner stack generate \
-			--mode registry \
-			--modePerServiceType.csharp docker-prebuilt-nopublish \
-			--flavors default,local-storage
-	) &
-	TONER_PID=$!
-fi
-
-if [ "$ENABLE_DOTNET_BUILD" = true ]; then
-	(
-		build all
-	) &
-	DOTNET_BUILD_PID=$!
-fi
-
+# Group 1: npm + generate (parallel) -> front build
 (
-	# Wait for npm install and front-end generate to complete
-	if [ "$ENABLE_NPM" = true ] || [ "$ENABLE_FRONT_GENERATE" = true ]; then
-		wait "$NPM_PID" "$FONT_GENERATE_PID"
+	if [ "$ENABLE_NPM" = true ]; then
+		(cd "$REPO_PATH/apps/Front" && npm install) &
+		NPM_PID=$!
 	fi
 
-	# Now start front-end build (depends on npm install)
+	if [ "$ENABLE_FRONT_GENERATE" = true ]; then
+		(cd "$REPO_PATH/apps/Front" && npm run generate) &
+		GENERATE_PID=$!
+	fi
+
+	[ "$ENABLE_NPM" = true ] && wait "$NPM_PID"
+	[ "$ENABLE_FRONT_GENERATE" = true ] && wait "$GENERATE_PID"
+
 	if [ "$ENABLE_FRONT_BUILD" = true ]; then
-		(
-			cd "$REPO_PATH/apps/Front/packages/app-pigment"
-			npm run build:nospreadjs
-			npm run serve
-		) &
+		cd "$REPO_PATH/apps/Front/packages/app-pigment"
+		npm run build:nospreadjs
+		npm run serve
 	fi
 ) &
+GROUP1_PID=$!
 
+# Group 2: toner + dotnet (parallel) -> stack up
 (
-	if [ "$ENABLE_TONER" = true ] || [ "$ENABLE_DOTNET_BUILD" = true ]; then
-		wait "$TONER_PID" "$DOTNET_BUILD_PID"
+	if [ "$ENABLE_TONER" = true ]; then
+		(
+			toner self-update
+			toner stack generate \
+				--mode registry \
+				--modePerServiceType.csharp docker-prebuilt-nopublish \
+				--flavors default,local-storage
+		) &
+		TONER_PID=$!
 	fi
 
-	(
-		stack up -d --build --remove-orphans
-	) &
+	if [ "$ENABLE_DOTNET_BUILD" = true ]; then
+		(build all) &
+		DOTNET_PID=$!
+	fi
+
+	[ "$ENABLE_TONER" = true ] && wait "$TONER_PID"
+	[ "$ENABLE_DOTNET_BUILD" = true ] && wait "$DOTNET_PID"
+
+	stack up -d --build --remove-orphans
 ) &
+GROUP2_PID=$!
 
-wait
-
-if [ "$ENABLE_CYPRESS" = true ]; then
-	cd "$REPO_PATH/apps/Front/packages/app-pigment-e2e"
-	npm run cypress:open:build
-fi
+wait "$GROUP1_PID" "$GROUP2_PID"
