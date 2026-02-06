@@ -1,14 +1,14 @@
 [user]
 	name = aymeric bouzy
 	email = 8168981+aymericbouzy@users.noreply.github.com
-	signingkey = 8168981+aymericbouzy@users.noreply.github.com
+	signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK4kxoJIDtNoN/NTl0YUDtLOIowSaf25ca4etAEmmGty
 [commit]
 	gpgsign = true
-[pull]
-	rebase = true
+# [pull]
+# 	rebase = true
 [core]
 	editor = code --wait
-	hooksPath = /Users/aymeric/.config/git/hooks
+	# hooksPath = /Users/aymericbouzy/.config/git/hooks
 [diff]
 	tool = default-difftool
 	mnemonicPrefix = true
@@ -24,7 +24,7 @@
 	l = log --graph --format=simple
 	st = status --short
 	d = diff --ignore-space-change
-	br = branch
+	br = branch --sort=-committerdate
 	cp = cherry-pick
 	# common operations
 	staged = diff --cached
@@ -36,10 +36,13 @@
 	publish = push -u
 	graph = log --graph --format=simple --branches --remotes
 	undo = reset HEAD~
+	previous = rev-parse --symbolic-full-name --abbrev-ref=loose @{-1}
+	prev = previous
 [rebase]
 	autoStash = true
 	autoSquash = true
 	forkPoint = true
+	# updateRefs = true
 [push]
 	default = current
 	followTags = true
@@ -72,11 +75,11 @@
 	defaultRemote = origin
 [column]
 	ui = auto
-[branch]
-	autoSetupRebase = remote
+# [branch]
+# 	autoSetupRebase = remote
 [merge]
 	conflictStyle = zdiff3
-	log = 1000
+	# log = 1000
 	autoStash = true
 [tag]
 	sort = -version:refname
@@ -88,4 +91,11 @@
 [init]
 	defaultBranch = master
 [gpg]
-	program = /usr/local/bin/gpg
+	format = ssh
+[gpg "ssh"]
+  program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
+[filter "lfs"]
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
