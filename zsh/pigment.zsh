@@ -22,6 +22,11 @@ function e2e {
 		for arg in "$@"; do
 			is_known_trigger=false
 			for i in {1..${#trigger_map[@]}}; do
+				if [[ "$arg" == "--help" ]] || [[ "$arg" == "-h" ]]; then
+					echo "Available triggers: ${trigger_map[@]}"
+					return 0
+				fi
+
 				if [[ "${trigger_map[$i]}" == "$arg" ]]; then
 					if [[ -n "$triggers" ]]; then
 						triggers+=","
