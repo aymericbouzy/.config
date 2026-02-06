@@ -84,13 +84,6 @@ function git-switch-pull {
 
 alias m='git-switch-pull $(git-main-branch)'
 
-function develop {
-	git-switch-pull develop
-	echo ""
-	echo "Unreleased changes:"
-	git --no-pager d $(git-main-branch)..develop --stat
-}
-
 function blame-ignore {
 	local COMMIT="$1"
 	echo "# Prettier" >>.git-blame-ignore-revs
@@ -100,11 +93,6 @@ function blame-ignore {
 	echo "  ignoreRevsFile = .git-blame-ignore-revs" >>.gitconfig
 
 	git config include.path ../.gitconfig
-}
-
-function pending-release {
-	git fetch
-	git l "$(git-main-branch)@{u}..develop@{u}" "$@"
 }
 
 # from https://polothy.github.io/post/2019-08-19-fzf-git-checkout/
