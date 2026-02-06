@@ -3,19 +3,23 @@
 set -e
 
 # Parse command line arguments
-ENABLE_NPM=true
-ENABLE_FRONT_BUILD=true
-ENABLE_FRONT_GENERATE=true
+ENABLE_FRONT=false
+ENABLE_FRONT_SERVE=false
 ENABLE_DOTNET_BUILD=true
 ENABLE_TONER=true
 
+usage() {
+	echo "Usage: $0 [--front] [--serve] [--no-dotnet-build] [--no-toner]"
+	exit 1
+}
+
 while [ $# -gt 0 ]; do
 	case "$1" in
-	--no-npm)
-		ENABLE_NPM=false
+	--front)
+		ENABLE_FRONT=true
 		;;
-	--no-front-build)
-		ENABLE_FRONT_BUILD=false
+	--serve)
+		ENABLE_FRONT_SERVE=true
 		;;
 	--no-dotnet-build)
 		ENABLE_DOTNET_BUILD=false
@@ -23,10 +27,12 @@ while [ $# -gt 0 ]; do
 	--no-toner)
 		ENABLE_TONER=false
 		;;
+	--help)
+		usage
+		;;
 	*)
 		echo "Unknown option: $1"
-		echo "Usage: $0 [--no-npm] [--no-front-build] [--no-dotnet-build] [--no-toner]"
-		exit 1
+		usage
 		;;
 	esac
 	shift
@@ -34,25 +40,15 @@ done
 
 REPO_PATH="$(git rev-parse --show-toplevel)"
 
-# Group 1: npm + generate (parallel) -> front build
+# Group 1: npm + generate + front build
 (
-	if [ "$ENABLE_NPM" = true ]; then
-		(cd "$REPO_PATH/apps/Front" && npm install) &
-		NPM_PID=$!
-	fi
+	if [ "$ENABLE_FRONT" = true ]; then
+		cd "$REPO_PATH/apps/Front"
+		npm install
+		npm run generate
 
-	if [ "$ENABLE_FRONT_GENERATE" = true ]; then
-		(cd "$REPO_PATH/apps/Front" && npm run generate) &
-		GENERATE_PID=$!
-	fi
-
-	[ "$ENABLE_NPM" = true ] && wait "$NPM_PID"
-	[ "$ENABLE_FRONT_GENERATE" = true ] && wait "$GENERATE_PID"
-
-	if [ "$ENABLE_FRONT_BUILD" = true ]; then
 		cd "$REPO_PATH/apps/Front/packages/app-pigment"
 		npm run build:nospreadjs
-		npm run serve
 	fi
 ) &
 GROUP1_PID=$!
@@ -66,6 +62,8 @@ GROUP1_PID=$!
 				--mode registry \
 				--modePerServiceType.csharp docker-prebuilt-nopublish \
 				--flavors default,local-storage
+
+			stack down
 		) &
 		TONER_PID=$!
 	fi
@@ -83,3 +81,10 @@ GROUP1_PID=$!
 GROUP2_PID=$!
 
 wait "$GROUP1_PID" "$GROUP2_PID"
+
+if [ "$ENABLE_FRONT_SERVE" = true ]; then
+	(
+		cd "$REPO_PATH/apps/Front/packages/app-pigment"
+		npm run serve
+	)
+fi
