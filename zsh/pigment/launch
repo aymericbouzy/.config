@@ -2,6 +2,12 @@
 
 set -e
 
+# propagate the signal to all child processes
+cleanup() {
+	kill 0
+}
+trap cleanup INT TERM
+
 # Parse command line arguments
 ENABLE_FRONT=false
 ENABLE_FRONT_SERVE=false
@@ -40,15 +46,15 @@ done
 
 REPO_PATH="$(git rev-parse --show-toplevel)"
 
-# Group 1: npm + generate + front build
+# Group 1: pnpm + generate + front build
 (
 	if [ "$ENABLE_FRONT" = true ]; then
 		cd "$REPO_PATH/apps/Front"
-		npm install
-		npm run generate
+		pnpm install
+		pnpm generate
 
 		cd "$REPO_PATH/apps/Front/packages/app-pigment"
-		npm run build:nospreadjs
+		pnpm build:nospreadjs
 	fi
 ) &
 GROUP1_PID=$!
@@ -57,7 +63,8 @@ GROUP1_PID=$!
 (
 	if [ "$ENABLE_TONER" = true ]; then
 		(
-			toner self-update
+			# toner fails when already up to date
+			toner self-update || true
 			toner stack generate \
 				--mode registry \
 				--modePerServiceType.csharp docker-prebuilt-nopublish \
@@ -85,6 +92,6 @@ wait "$GROUP1_PID" "$GROUP2_PID"
 if [ "$ENABLE_FRONT_SERVE" = true ]; then
 	(
 		cd "$REPO_PATH/apps/Front/packages/app-pigment"
-		npm run serve
+		pnpm serve
 	)
 fi
