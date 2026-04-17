@@ -76,7 +76,7 @@ GROUP1_PID=$!
 	fi
 
 	if [ "$ENABLE_DOTNET_BUILD" = true ]; then
-		(build all) &
+		(build aspire && build testsuites) &
 		DOTNET_PID=$!
 	fi
 
