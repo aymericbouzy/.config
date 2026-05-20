@@ -1,0 +1,56 @@
+#!/bin/bash
+# git-sweep: Fetch, prune, and safely delete 'gone' branches, respecting stack dependencies.
+
+DRY_RUN=0
+
+# Parse arguments for -n or --dry-run
+for arg in "$@"; do
+    if [ "$arg" == "-n" ] || [ "$arg" == "--dry-run" ]; then
+        DRY_RUN=1
+    fi
+done
+
+if [ $DRY_RUN -eq 1 ]; then
+    echo "🔎 Running in DRY RUN mode. No branches will actually be deleted."
+fi
+
+echo "Fetching and pruning remote-tracking branches..."
+git fetch --prune
+
+# 1. Collect all branches that are currently used as a base or original-base
+git config --local --get-regexp '^branch\..*\.(base|original-base)$' 2>/dev/null | awk '{print $2}' | sort -u > /tmp/git-sweep-protected.txt
+
+# 2. Collect all branches that have their remote tracking branch deleted (marked as [gone])
+GONE_BRANCHES=$(git for-each-ref --format '%(refname:short) %(upstream:track)' refs/heads | awk '$2 == "[gone]" {print $1}')
+
+if [ -z "$GONE_BRANCHES" ]; then
+    echo "✨ No 'gone' branches found. You're all clean!"
+    rm -f /tmp/git-sweep-protected.txt
+    exit 0
+fi
+
+# 3. Safely delete gone branches
+count=0
+for branch in $GONE_BRANCHES; do
+    if grep -Fxq "$branch" /tmp/git-sweep-protected.txt; then
+        echo "🛡️  Skipping: $branch (Protected: Used as a base for another branch)"
+    else
+        if [ $DRY_RUN -eq 1 ]; then
+            echo "Would delete: $branch"
+        else
+            echo "🗑️  Deleting: $branch"
+            git branch -D "$branch"
+            # Keep .git/config clean by removing any lingering configurations for the deleted branch
+            git config --local --remove-section "branch.$branch" 2>/dev/null || true
+        fi
+        count=$((count + 1))
+    fi
+done
+
+rm -f /tmp/git-sweep-protected.txt
+
+if [ $DRY_RUN -eq 1 ]; then
+    echo "✨ Dry run complete. $count branch(es) would be deleted."
+else
+    echo "✨ Sweep complete. $count branch(es) deleted safely."
+fi

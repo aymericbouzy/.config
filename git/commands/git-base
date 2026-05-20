@@ -1,16 +1,177 @@
 #! /bin/zsh
 
 local branch="$(git branch --show-current)"
+
+if [ -z "$branch" ]; then
+	echo "Not on a branch" >/dev/stderr
+	return 1
+fi
+
 local current_base="$(git config --get "branch.$branch.base")"
 
 if [ -z "$1" ]; then
 	echo "$current_base"
 elif [ "$1" = "--sha" ]; then
 	echo "$(git config --get "branch.$branch.base-sha")"
+elif [ "$1" = "--original" ]; then
+	echo "$(git config --get "branch.$branch.original-base")"
+elif [ "$1" = "--repair" ]; then
+	if [ -n "$current_base" ]; then
+		echo "Branch already has a base: $current_base" >/dev/stderr
+		return 1
+	fi
+
+	# Build a map of tip SHA -> branch name for all local branches
+	typeset -A tip_to_branch
+	while IFS=' ' read -r sha name; do
+		[ "$name" = "$branch" ] && continue
+		tip_to_branch[$sha]="$name"
+	done < <(git branch --format='%(objectname) %(refname:short)')
+
+	# Walk commits not in master from HEAD backwards; first match is the parent
+	local best_branch=""
+	while read -r sha; do
+		if [ -n "${tip_to_branch[$sha]}" ]; then
+			best_branch="${tip_to_branch[$sha]}"
+			break
+		fi
+	done < <(git log master..HEAD --format="%H")
+
+	if [ -z "$best_branch" ]; then
+		echo "Could not find a parent branch" >/dev/stderr
+		return 1
+	fi
+
+	git config "branch.$branch.base" "$best_branch"
+	git config "branch.$branch.base-sha" "$(git rev-parse "$best_branch")"
+	echo "Set base to $best_branch"
+elif [ "$1" = "--tree" ]; then
+	# Resolve the logical parent of a branch: original-base if set, otherwise base
+	resolve_parent() {
+		local b="$1"
+		local orig="$(git config --get "branch.$b.original-base")"
+		if [ -n "$orig" ]; then
+			echo "$orig"
+		else
+			echo "$(git config --get "branch.$b.base")"
+		fi
+	}
+
+	# Walk up from current branch to find the stack root (first branch whose base is master/main)
+	local walk="$branch"
+	local stack_root=""
+	while true; do
+		local walk_base="$(resolve_parent "$walk")"
+		if [ -z "$walk_base" ] || [ "$walk_base" = "master" ] || [ "$walk_base" = "main" ]; then
+			stack_root="$walk"
+			break
+		fi
+		walk="$walk_base"
+	done
+
+	# If we're on master/main or no stack root found, nothing to show
+	if [ -z "$stack_root" ] || [ "$stack_root" = "master" ] || [ "$stack_root" = "main" ]; then
+		echo "Not in a stack" >/dev/stderr
+		return 1
+	fi
+
+	# Build children map from all base configs, preferring original-base
+	# Use process substitution to avoid subshell from pipe
+	typeset -A children
+	typeset -A branch_parent
+	# First pass: collect all base values
+	while read -r key value; do
+		local child="${key#branch.}"
+		child="${child%.base}"
+		branch_parent[$child]="$value"
+	done < <(git config --get-regexp 'branch\..*\.base$' | grep -v '\.base-sha$')
+	# Second pass: override with original-base where available
+	while read -r key value; do
+		local child="${key#branch.}"
+		child="${child%.original-base}"
+		branch_parent[$child]="$value"
+	done < <(git config --get-regexp 'branch\..*\.original-base$' 2>/dev/null)
+	# Build children map from resolved parents
+	for child parent in "${(@kv)branch_parent}"; do
+		if [ -n "${children[$parent]}" ]; then
+			children[$parent]="${children[$parent]} $child"
+		else
+			children[$parent]="$child"
+		fi
+	done
+
+	# Fetch PR numbers for all branches
+	typeset -A branch_pr
+	local since="$(date -v-4w +%Y-%m-%d)"
+	while IFS=$'\t' read -r number head_ref; do
+		branch_pr[$head_ref]="$number"
+	done < <(gh pr list --json number,headRefName --state all --search "author:@me created:>=$since" 2>/dev/null | jq -r '.[] | [.number, .headRefName] | @tsv')
+
+	# Recursive tree printer
+	print_tree() {
+		local node="$1"
+		local prefix="$2"
+		local is_last="$3"
+
+		local marker=""
+		if [ "$node" = "$branch" ]; then
+			marker=" *"
+		fi
+
+		local pr_label=""
+		if [ -n "${branch_pr[$node]}" ]; then
+			pr_label=" (#${branch_pr[$node]})"
+		fi
+
+		if [ "$is_last" = "true" ]; then
+			echo "${prefix}└── ${node}${pr_label}${marker}"
+		else
+			echo "${prefix}├── ${node}${pr_label}${marker}"
+		fi
+
+		# Compute new prefix for children
+		local child_prefix
+		if [ "$is_last" = "true" ]; then
+			child_prefix="${prefix}    "
+		else
+			child_prefix="${prefix}│   "
+		fi
+
+		# Sort and print children
+		local node_children="${children[$node]}"
+		if [ -n "$node_children" ]; then
+			local sorted_children=(${(o)${(s: :)node_children}})
+			local count=${#sorted_children[@]}
+			local i=0
+			for child in "${sorted_children[@]}"; do
+				i=$((i + 1))
+				if [ "$i" -eq "$count" ]; then
+					print_tree "$child" "$child_prefix" "true"
+				else
+					print_tree "$child" "$child_prefix" "false"
+				fi
+			done
+		fi
+	}
+
+	# Find the base of the stack root (master or main)
+	local root_base="$(git config --get "branch.$stack_root.base")"
+	if [ -z "$root_base" ]; then
+		root_base="master"
+	fi
+
+	# Print tree starting from trunk, with stack root as first child
+	echo "$root_base"
+	print_tree "$stack_root" "" "true"
 else
 	git config "branch.$branch.base" "$1"
 	if [ "$current_base" != "$1" ]; then
 		echo "Updated base from $current_base to $1"
+
+		# Preserve original-base when restacking onto master/main
+		if [ -n "$current_base" ] && [ "$current_base" != "master" ] && [ "$current_base" != "main" ]; then
+			git config "branch.$branch.original-base" "$current_base"
+		fi
 	fi
 
 	if [ "$2" = "--sha" ]; then

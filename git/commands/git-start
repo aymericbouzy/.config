@@ -7,7 +7,7 @@ if [ -z "$branch" ]; then
 	branch="$(echo "$branch" | tr ' ' '-')"
 fi
 
-if [ -n "$GIT_BRANCH_PREFIX" ]; then
+if [ -n "$GIT_BRANCH_PREFIX" ] && [[ "$branch" != "$GIT_BRANCH_PREFIX/"* ]]; then
 	branch="$GIT_BRANCH_PREFIX/$branch"
 fi
 

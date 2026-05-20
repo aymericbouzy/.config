@@ -1,9 +1,10 @@
 #! /bin/zsh
 
 base=$(git base)
+local new_base="$1"
 
 git ff "$base"
-if [ "$base" = master ]; then
+if [ "$base" = master ] && [ -z "$new_base" ]; then
 	git merge master
 else
 	git rb
@@ -12,8 +13,6 @@ fi
 if [ $? -ne 0 ]; then
 	return $?
 fi
-
-local new_base="$1"
 
 if [ ! -z "$new_base" ]; then
 	git ff "$new_base"
